@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+psycopg2-binary = "*"
+requests = "*"
+regex = "*"
+bs4 = "*"
+ipykernel = "*"
+pandas = "*"
+python-dotenv = "*"
+
+[requires]
+python_version = "3.7"
