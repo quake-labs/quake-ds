@@ -2,6 +2,12 @@ import psycopg2
 from dotenv import load_dotenv
 import os
 
+'''these are tools designed for smothing away the challenges of working with
+psycopg2 and just wory about writting sql. They will most likely not be
+directly accessible from within our app. I need to look up the style guide, but
+its possible that this should have __ __ around its name.''' 
+
+
 load_dotenv()
 
 #This needs to be switched to connect to the postgreSQL DB
@@ -15,7 +21,8 @@ CONN = psycopg2.connect(user = os.getenv('toyUSER'),
 def query_one(query):
     curs = CONN.cursor()
     try:
-        response = curs.execute(query).fetchone()
+        response = curs.execute(query)
+        response = curs.fetchone()
     except:
         print('Query returned no result')
         curs.close()
@@ -27,8 +34,14 @@ def query_one(query):
 
 def query_all(query):
     curs = CONN.cursor()
-    response = curs.execute(query)
-    response = response.fetchall()
+    try:
+        response = curs.execute(query)
+        response = curs.fetchall()
+    except:
+        print('Query returned no result')
+        curs.close()
+        CONN.commit()
+        return None
     curs.close()
     CONN.commit()
     return response

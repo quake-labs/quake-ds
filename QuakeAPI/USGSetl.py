@@ -18,6 +18,9 @@ CREATE_USGS_QUERY = '''CREATE TABLE USGS (ID SERIAL PRIMARY KEY,
     )'''
 
 def setup_USGS():
+    '''this function is used to set up the initial database, it first drops the
+    table if it exists and then creates a new one and fills it with the last
+    month of data from USGS.'''
     curs = CONN.cursor()
     try:
         curs.execute('DROP TABLE USGS;')
@@ -65,6 +68,10 @@ def get_recent_quakes(url):
     return quake_list
 
 def insert_quakes(recents):
+    '''this function takes in an extracted and transformed list of recent
+    earthquakes and inserts them into the database, checking to make sure that
+    the quake isn't already there. Once it finds a duplicate it stops inserting
+    '''
     curs = CONN.cursor()
     last_time = curs.execute('SELECT TIME FROM USGS ORDER BY time DESC LIMIT 1;').fetchone()[0]
     for quake in recents:
