@@ -1,18 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
-import psycopg2
 import pandas as pd
 import re
 import time
-import sqlite3
+from DBQueries import *
 
-PG_CONN = psycopg2.connect(user = os.getenv('PGUSER'),
-                        password = os.getenv("PGPASSWORD"),
-                        host = os.getenv("PGHOST"),
-                        dbname = os.getenv("PGUSER"))
-
-
-CONN = sqlite3.Connection('EMSCbacklog.sqlite3')
 
 CREATE_EMSC = '''CREATE TABLE EMSC
                 (ID SERIAL PRIMARY KEY,

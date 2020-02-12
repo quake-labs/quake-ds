@@ -1,12 +1,7 @@
 import requests
 import pandas as pd
-import sqlite3
-import psycopg2
 import re
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
+from DBQueries import *
 
 HOUR = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'
 DAY = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson'
@@ -22,14 +17,6 @@ CREATE_USGS_QUERY = '''CREATE TABLE USGS (ID SERIAL PRIMARY KEY,
     Oceanic bool
     )'''
 
-
-#This needs to be switched to connect to the postgreSQL DB
-'''CONN = psycopg2.connect(user = os.getenv('toyUSER'),
-                        password = os.getenv("toyPASSWORD"),
-                        host = os.getenv("toyHOST"),
-                        dbname = os.getenv("toyNAME"),
-                        port = 5432)'''
-
 def setup_USGS():
     curs = CONN.cursor()
     try:
@@ -39,7 +26,7 @@ def setup_USGS():
         CONN.commit()
         curs = CONN.cursor()
     curs.execute(CREATE_USGS_QUERY)
-    recents = get_recent_quakes(MONTH)
+    recents = get_recent_quakes(HOUR)
     for quake in recents:
         Place = quake['place']
         Time = quake['time']
@@ -102,3 +89,6 @@ def pipe_data(url):
     then loads the new quakes into the database'''
     recents = get_recent_quakes(url)
     insert_quakes(recents)
+
+if __name__=='__main__':
+    setup_USGS()
