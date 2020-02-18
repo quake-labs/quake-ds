@@ -1,0 +1,56 @@
+import psycopg2
+from dotenv import load_dotenv
+import os
+
+'''these are tools designed for smothing away the challenges of working with
+psycopg2 and just wory about writting sql. They will most likely not be
+directly accessible from within our app. I need to look up the style guide, but
+its possible that this should have __ __ around its name.''' 
+
+
+load_dotenv()
+
+#This needs to be switched to connect to the postgreSQL DB
+CONN = psycopg2.connect(user = os.getenv('toyUSER'),
+                        password = os.getenv("toyPASSWORD"),
+                        host = os.getenv("toyHOST"),
+                        dbname = os.getenv("toyNAME"),
+                        port = 5432)
+
+
+def query_one(query):
+    curs = CONN.cursor()
+    try:
+        response = curs.execute(query)
+        response = curs.fetchone()
+    except:
+        print('Query returned no result')
+        curs.close()
+        CONN.commit()
+        return None
+    curs.close()
+    CONN.commit()
+    return response
+
+def query_all(query):
+    curs = CONN.cursor()
+    try:
+        response = curs.execute(query)
+        response = curs.fetchall()
+    except:
+        print('Query returned no result')
+        curs.close()
+        CONN.commit()
+        return None
+    curs.close()
+    CONN.commit()
+    return response
+
+def query(query):
+    curs = CONN.cursor()
+    try:
+        curs.execute(query)
+    except:
+        print('Query error')
+    curs.close()
+    CONN.commit()
