@@ -1,6 +1,6 @@
 import requests
 import re
-from DBQueries import *
+from .DBQueries import *
 
 HOUR = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'
 DAY = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson'
