@@ -18,7 +18,13 @@ def create_app():
             limit 1;
         ''')
         quake = curs.fetchone()[1:]
-        return jsonify(quake)
+        response = {'id': quake[0],
+                    'place': quake[1],
+                    'lat': quake[2],
+                    'lon': quake[3],
+                    'mag': quake[4],
+                    'Oceanic': quake[5]}
+        return jsonify(response)
 
     @app.route('/last/<time>')
     def getTime(time):
@@ -28,7 +34,7 @@ def create_app():
         if time.upper() not in ['HOUR', 'DAY', 'WEEK', 'MONTH']:
             return 'Please select from hour, day, week, or month'
         else:
-            return jsonify(get_recent_quakes(os.getenv(time.upper())))
+            return jsonify(get_recent_quakes(os.environ[time.upper()]))
 
     @app.route('/history/<lat>,<lon>,<dist>')
     def history(lat, lon, dist):
