@@ -1,1 +1,1 @@
-web: gunicorn app:QuakeAPI -t 360
+web: gunicorn QuakeAPI:app -t 360
