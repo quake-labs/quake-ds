@@ -1,5 +1,4 @@
 import requests
-import pandas as pd
 import re
 from DBQueries import *
 
@@ -16,6 +15,7 @@ CREATE_USGS_QUERY = '''CREATE TABLE USGS (ID SERIAL PRIMARY KEY,
     Magnitude float,
     Oceanic bool
     )'''
+
 
 def setup_USGS():
     '''this function is used to set up the initial database, it first drops the
@@ -45,7 +45,6 @@ def setup_USGS():
         curs = CONN.cursor()
 
 
-
 def get_recent_quakes(url):
     '''This function gets all the quakes from USGS
     it takes in a url as an argument, which can be any of the gloabl variables in this
@@ -66,6 +65,7 @@ def get_recent_quakes(url):
         quake_data['tsunami'] = quake['properties']['tsunami']
         quake_list.append(quake_data)
     return quake_list
+
 
 def insert_quakes(recents):
     '''this function takes in an extracted and transformed list of recent
@@ -91,11 +91,13 @@ def insert_quakes(recents):
             CONN.commit()
             curs = CONN.cursor()
 
+
 def pipe_data(url):
     '''this function takes in a url, gets the recent earthquakes,
     then loads the new quakes into the database'''
     recents = get_recent_quakes(url)
     insert_quakes(recents)
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     setup_USGS()
