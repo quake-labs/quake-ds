@@ -1,1 +1,1 @@
-web: gunicorn QuakeAPI
+web: gunicorn QuakeAPI:APP
