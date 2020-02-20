@@ -37,7 +37,11 @@ def setup_USGS():
         Longitude = quake['longitude']
         Magnitude = quake['magnitude']
         Oceanic = bool(quake['tsunami'])
-        insert_query = f"INSERT INTO USGS (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ('{Place}', {Time}, {Latitude}, {Longitude}, {Magnitude}, {Oceanic})"
+        insert_query = f"""INSERT INTO USGS
+                        (Place, Time, Latitude, Longitude, Magnitude, Oceanic)
+                        VALUES
+                        ('{Place}', {Time}, {Latitude}, {Longitude},
+                        {Magnitude}, {Oceanic})"""
         print(Place)
         curs.execute(insert_query)
         curs.close()
@@ -54,7 +58,7 @@ def get_recent_quakes(url):
     for quake in quakes.json()['features']:
         quake_data = {}
 
-        quake_data['Oceanic'] = bool(quake['properties']['tsunami'])
+        quake_data['Oceanic'] = quake['properties']['tsunami']
         quake_data['magnitude'] = quake['properties']['mag']
         quake_data['longitude'] = quake['geometry']['coordinates'][1]
         quake_data['latitude'] = quake['geometry']['coordinates'][0]
@@ -83,7 +87,11 @@ def insert_quakes(recents):
             Longitude = quake['longitude']
             Magnitude = quake['magnitude']
             Oceanic = quake['Oceanic']
-            insert_query = f"INSERT INTO USGS (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ('{Place}', {Time}, {Latitude}, {Longitude}, {Magnitude}, {Oceanic})"
+            insert_query = f"""INSERT INTO USGS
+                          (Place, Time, Latitude, Longitude, Magnitude, Oceanic)
+                           VALUES
+                           ('{Place}', {Time}, {Latitude}, {Longitude},
+                           {Magnitude}, {Oceanic})"""
             curs.execute(insert_query)
             curs.close()
             CONN.commit()
