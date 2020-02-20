@@ -17,13 +17,16 @@ def create_app():
             ORDER BY Time Desc
             limit 1;
         ''')
-        quake = curs.fetchone()[1:]
-        response = {'id': quake[0],
-                    'place': quake[1],
-                    'lat': quake[2],
-                    'lon': quake[3],
-                    'mag': quake[4],
-                    'Oceanic': quake[5]}
+        quake = curs.fetchone()
+        response = {'status_code': 200,
+                    'message': {
+                        'id': quake[0],
+                        'place': quake[1],
+                        'time': quake[2],  # time is currently in ms since epoch
+                        'lat': quake[3],
+                        'lon': quake[4],
+                        'mag': quake[5],
+                        'Oceanic': quake[6]}}
         return jsonify(response)
 
     @app.route('/last/<time>')
@@ -32,9 +35,13 @@ def create_app():
         get the last however many quakes. In a future release this will need to
         be improved to read out of our database'''
         if time.upper() not in ['HOUR', 'DAY', 'WEEK', 'MONTH']:
-            return 'Please select from hour, day, week, or month'
+            return jsonify({'status_code': 400,
+                            'message': '''please choose from "hour", "day",
+                                        "week", or "month"'''})
         else:
-            return jsonify(get_recent_quakes(os.environ[time.upper()]))
+            return jsonify({'status_code': 200,
+                            'message':
+                            get_recent_quakes(os.environ[time.upper()])})
 
     @app.route('/history/<lat>,<lon>,<dist>')
     def history(lat, lon, dist):
