@@ -70,7 +70,8 @@ def insert_quakes(recents):
     the quake isn't already there. Once it finds a duplicate it stops inserting
     '''
     curs = CONN.cursor()
-    last_time = curs.execute('SELECT TIME FROM USGS ORDER BY time DESC LIMIT 1;').fetchone()[0]
+    last_time = curs.execute('SELECT TIME FROM USGS ORDER BY time DESC LIMIT 1;')
+    last_time = curs.fetchone()[0]
     for quake in recents:
         if quake['time'] == last_time:
             print(quake['place'])
@@ -81,7 +82,7 @@ def insert_quakes(recents):
             Latitude = quake['latitude']
             Longitude = quake['longitude']
             Magnitude = quake['magnitude']
-            Oceanic = quake['tsunami']
+            Oceanic = quake['Oceanic']
             insert_query = f"INSERT INTO USGS (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ('{Place}', {Time}, {Latitude}, {Longitude}, {Magnitude}, {Oceanic})"
             curs.execute(insert_query)
             curs.close()
