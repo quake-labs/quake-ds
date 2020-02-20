@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Eyve takes local notes that don't need to go in github
+*notes.txt
