@@ -105,3 +105,6 @@ venv.bak/
 
 # Eyve takes local notes that don't need to go in github
 *notes.txt
+
+# the lambda function doesn't hide its keys
+config.py
