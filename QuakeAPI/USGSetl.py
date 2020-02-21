@@ -1,6 +1,8 @@
 import requests
 import re
 from .DBQueries import *
+from datetime import datetime
+import pytz
 
 HOUR = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'
 DAY = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson'
@@ -22,21 +24,25 @@ def setup_USGS():
     table if it exists and then creates a new one and fills it with the last
     month of data from USGS.'''
     curs = CONN.cursor()
+    print('cusor created ')
     try:
         curs.execute('DROP TABLE USGS;')
+        print('table dropped')
     except Exception as error:
         curs.close()
         CONN.commit()
         curs = CONN.cursor()
     curs.execute(CREATE_USGS_QUERY)
+    print('table created')
     recents = get_recent_quakes(HOUR)
+    print('got quakes')
     for quake in recents:
         Place = quake['place']
         Time = quake['time']
         Latitude = quake['latitude']
         Longitude = quake['longitude']
         Magnitude = quake['magnitude']
-        Oceanic = bool(quake['tsunami'])
+        Oceanic = quake['Oceanic']
         insert_query = f"""INSERT INTO USGS
                         (Place, Time, Latitude, Longitude, Magnitude, Oceanic)
                         VALUES
@@ -58,7 +64,7 @@ def get_recent_quakes(url):
     for quake in quakes.json()['features']:
         quake_data = {}
 
-        quake_data['Oceanic'] = quake['properties']['tsunami']
+        quake_data['Oceanic'] = bool(quake['properties']['tsunami'])
         quake_data['magnitude'] = quake['properties']['mag']
         quake_data['longitude'] = quake['geometry']['coordinates'][1]
         quake_data['latitude'] = quake['geometry']['coordinates'][0]
@@ -68,18 +74,23 @@ def get_recent_quakes(url):
     return quake_list
 
 
-def insert_quakes(recents):
+def print_results(results):
+    for result in results:
+        print(result['time'], result['place'])
+
+
+def insert_quakes(recents, period):
     '''this function takes in an extracted and transformed list of recent
     earthquakes and inserts them into the database, checking to make sure that
     the quake isn't already there. Once it finds a duplicate it stops inserting
+    Period should be one of 'HOUR', 'DAY', 'WEEK', or 'MONTH' and determines how
+    far back to check that data isn't duplicated
     '''
     curs = CONN.cursor()
-    last_time = curs.execute('SELECT TIME FROM USGS ORDER BY time DESC LIMIT 1;')
-    last_time = curs.fetchone()[0]
+    last_times = get_last_times(period)
     for quake in recents:
-        if quake['time'] == last_time:
+        if quake['time'] in last_times:
             print(quake['place'])
-            return None
         else:
             Place = quake['place']
             Time = quake['time']
@@ -96,6 +107,29 @@ def insert_quakes(recents):
             curs.close()
             CONN.commit()
             curs = CONN.cursor()
+
+
+def get_last_times(period='hour'):
+    now = int(datetime.now(tz=pytz.utc).timestamp() * 1000)
+    curs = CONN.cursor()
+    times = []
+    if period.upper() == 'HOUR' or period == HOUR:
+        curs.execute(f'SELECT time FROM USGS WHERE time > {now-3.6e6}')
+        time = curs.fetchall()
+    elif period.upper() == 'DAY' or period == DAY:
+        curs.execute(f'SELECT time FROM USGS WHERE time > {now-8.64e7}')
+        time = curs.fetchall()
+    elif period.upper() == 'WEEK' or period == WEEK:
+        curs.execute(f'SELECT time FROM USGS WHERE time > {now-6.048e+8}')
+        time = curs.fetchall()
+    elif period.upper() == 'MONTH' or period == MONTH:
+        curs.execute(f'SELECT time FROM USGS WHERE time > {now-2.628e+9}')
+        time = curs.fetchall()
+    else:
+        time = []
+    for t in time:
+        times.append(t[0])
+    return times
 
 
 def pipe_data(url):
