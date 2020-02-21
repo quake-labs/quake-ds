@@ -22,7 +22,8 @@ def create_app():
                     'message': {
                         'id': quake[0],
                         'place': quake[1],
-                        'time': quake[2],  # time is currently in ms since epoch
+                        # time is currently in ms since epoch
+                        'time': quake[2],
                         'lat': quake[3],
                         'lon': quake[4],
                         'mag': quake[5],

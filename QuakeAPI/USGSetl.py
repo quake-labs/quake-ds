@@ -2,10 +2,11 @@ import requests
 import re
 from .DBQueries import *
 
-HOUR = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'
-DAY = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson'
-WEEK = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
-MONTH = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson'
+SOURCE = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/'
+HOUR = SOURCE + 'all_hour.geojson'
+DAY = SOURCE + 'all_day.geojson'
+WEEK = SOURCE + 'all_week.geojson'
+MONTH = SOURCE + 'all_month.geojson'
 
 CREATE_USGS_QUERY = '''CREATE TABLE USGS (ID SERIAL PRIMARY KEY,
     Place text,
@@ -37,7 +38,10 @@ def setup_USGS():
         Longitude = quake['longitude']
         Magnitude = quake['magnitude']
         Oceanic = bool(quake['tsunami'])
-        insert_query = f"INSERT INTO USGS (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ('{Place}', {Time}, {Latitude}, {Longitude}, {Magnitude}, {Oceanic})"
+        insert_query = 'INSERT INTO USGS ' +
+        '(Place, Time, Latitude, Longitude, Magnitude, Oceanic)' +
+        f"VALUES ('{Place}', {Time}, {Latitude}, {Longitude}, {Magnitude}, " +
+        f"{Oceanic})"
         print(Place)
         curs.execute(insert_query)
         curs.close()
@@ -46,9 +50,11 @@ def setup_USGS():
 
 
 def get_recent_quakes(url):
-    '''This function gets all the quakes from USGS
-    it takes in a url as an argument, which can be any of the gloabl variables in this
-    package'''
+    '''
+    This function gets all the quakes from USGS
+    it takes in a url as an argument,
+    which can be any of the gloabl variables in this package
+    '''
     quakes = requests.get(url)
     quake_list = []
     for quake in quakes.json()['features']:
@@ -70,7 +76,9 @@ def insert_quakes(recents):
     the quake isn't already there. Once it finds a duplicate it stops inserting
     '''
     curs = CONN.cursor()
-    last_time = curs.execute('SELECT TIME FROM USGS ORDER BY time DESC LIMIT 1;').fetchone()[0]
+    last_time = curs.execute(
+        'SELECT TIME FROM USGS ORDER BY time DESC LIMIT 1;'
+        ).fetchone()[0]
     for quake in recents:
         if quake['time'] == last_time:
             print(quake['place'])
@@ -82,7 +90,10 @@ def insert_quakes(recents):
             Longitude = quake['longitude']
             Magnitude = quake['magnitude']
             Oceanic = quake['tsunami']
-            insert_query = f"INSERT INTO USGS (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ('{Place}', {Time}, {Latitude}, {Longitude}, {Magnitude}, {Oceanic})"
+            insert_query = 'INSERT INTO USGS ' +
+            '(Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ' +
+            f"('{Place}', {Time}, {Latitude}, "     +
+            f"{Longitude}, {Magnitude}, {Oceanic})"
             curs.execute(insert_query)
             curs.close()
             CONN.commit()
@@ -94,7 +105,6 @@ def pipe_data(url):
     then loads the new quakes into the database'''
     recents = get_recent_quakes(url)
     insert_quakes(recents)
-
 
 if __name__ == '__main__':
     setup_USGS()
