@@ -99,10 +99,10 @@ def insert_quakes(recents, period):
             Longitude = quake['longitude']
             Magnitude = quake['magnitude']
             Oceanic = quake['tsunami']
-            insert_query = 'INSERT INTO USGS ' +
-            '(Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ' +
-            f"('{Place}', {Time}, {Latitude}, "     +
-            f"{Longitude}, {Magnitude}, {Oceanic})"
+            insert_query = f"""INSERT INTO USGS
+                (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES
+                ('{Place}', {Time}, {Latitude},
+                {Longitude}, {Magnitude}, {Oceanic})"""
             curs.execute(insert_query)
             curs.close()
             CONN.commit()

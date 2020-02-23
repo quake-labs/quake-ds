@@ -1,7 +1,7 @@
 import requests
 import re
 import psycopg2
-from config import *
+from .config import *
 from datetime import datetime
 import pytz
 
@@ -16,8 +16,8 @@ HOUR = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojs
 
 def get_recent_quakes(url):
     '''This function gets all the quakes from USGS
-    it takes in a url as an argument, which can be any of the gloabl variables in this
-    package'''
+    it takes in a url as an argument, which can be any of the gloabl
+    variables in this package'''
     quakes = requests.get(url)
     quake_list = []
     for quake in quakes.json()['features']:
@@ -39,10 +39,10 @@ def insert_quakes(recents, period):
     the quake isn't already there. Once it finds a duplicate it stops inserting
     '''
     curs = CONN.cursor()
-    last_time = get_last_times(period)
+    last_time = get_last_times(recents[0]['time'], period)
     for quake in recents:
         if quake['time'] in last_time:
-            print(quake['place'])
+            print('old:', quake['place'])
         else:
             Place = quake['place']
             Time = quake['time']
@@ -50,28 +50,33 @@ def insert_quakes(recents, period):
             Longitude = quake['longitude']
             Magnitude = quake['magnitude']
             Oceanic = quake['Oceanic']
-            insert_query = f"INSERT INTO USGS (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES ('{Place}', {Time}, {Latitude}, {Longitude}, {Magnitude}, {Oceanic})"
+            insert_query = f"""INSERT INTO USGS
+                        (Place, Time, Latitude, Longitude, Magnitude, Oceanic)
+                        VALUES ('{Place}', {Time}, {Latitude}, {Longitude},
+                        {Magnitude}, {Oceanic})"""
             curs.execute(insert_query)
             curs.close()
             CONN.commit()
             curs = CONN.cursor()
+            print(f"new: {quake['place']}")
 
 
-def get_last_times(period='hour'):
+def get_last_times(now, period='hour'):
     now = int(datetime.now(tz=pytz.utc).timestamp() * 1000)
     curs = CONN.cursor()
     times = []
     if period.upper() == 'HOUR' or period == HOUR:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-3.6e6}')
+        print('collecting one HOUR')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-3.6e6}')
         time = curs.fetchall()
     elif period.upper() == 'DAY' or period == DAY:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-8.64e7}')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-8.64e7}')
         time = curs.fetchall()
     elif period.upper() == 'WEEK' or period == WEEK:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-6.048e+8}')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-6.048e+8}')
         time = curs.fetchall()
     elif period.upper() == 'MONTH' or period == MONTH:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-2.628e+9}')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-2.628e+9}')
         time = curs.fetchall()
     else:
         time = []
@@ -86,4 +91,4 @@ def pipe_data(url):
     '''this function takes in a url, gets the recent earthquakes,
     then loads the new quakes into the database'''
     recents = get_recent_quakes(url)
-    insert_quakes(recents, 'hour')
+    insert_quakes(recents, url)
