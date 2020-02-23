@@ -22,7 +22,7 @@ def get_recent_quakes(url):
     for quake in quakes.json()['features']:
         quake_data = {}
 
-        quake_data['Oceanic'] = bool(quake['properties']['tsunami'])
+        quake_data['Oceanic'] = bool(int(quake['properties']['tsunami']))
         quake_data['magnitude'] = quake['properties']['mag']
         quake_data['longitude'] = quake['geometry']['coordinates'][1]
         quake_data['latitude'] = quake['geometry']['coordinates'][0]
@@ -41,7 +41,7 @@ def insert_quakes(recents, period):
     last_time = get_last_times(recents[0]['time'], period)
     for quake in recents:
         if quake['time'] in last_time:
-            print('old:', quake['place'])
+            print('old:', quake['place'], quake['Oceanic'])
         else:
             Place = quake['place']
             Time = quake['time']
@@ -57,7 +57,7 @@ def insert_quakes(recents, period):
             curs.close()
             CONN.commit()
             curs = CONN.cursor()
-            print(f"new: {quake['place']}")
+            print(f"new: {quake['place']}, {quake['Oceanic']}")
 
 
 def get_last_times(now, period='hour'):
