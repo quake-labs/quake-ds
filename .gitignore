@@ -110,3 +110,6 @@ venv.bak/
 
 # the lambda function doesn't hide its keys
 config.py
+
+# the Lambda Function shouldn't be uploaded
+*.zip
