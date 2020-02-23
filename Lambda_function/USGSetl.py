@@ -2,8 +2,7 @@ import requests
 import re
 import psycopg2
 from .config import *
-from datetime import datetime
-import pytz
+
 
 CONN = psycopg2.connect(user=toyUSER,
                         password=toyPASSWORD,
@@ -62,7 +61,6 @@ def insert_quakes(recents, period):
 
 
 def get_last_times(now, period='hour'):
-    now = int(datetime.now(tz=pytz.utc).timestamp() * 1000)
     curs = CONN.cursor()
     times = []
     if period.upper() == 'HOUR' or period == HOUR:
