@@ -17,7 +17,9 @@ def get_recent_quakes(url):
     '''This function gets all the quakes from USGS
     it takes in a url as an argument, which can be any of the gloabl
     variables in this package'''
+    print('get_recent called')
     quakes = requests.get(url)
+    print('requests.get complete ')
     quake_list = []
     for quake in quakes.json()['features']:
         quake_data = {}
@@ -28,7 +30,9 @@ def get_recent_quakes(url):
         quake_data['latitude'] = quake['geometry']['coordinates'][0]
         quake_data['place'] = re.sub("[']", "''", quake['properties']['place'])
         quake_data['time'] = quake['properties']['time']
+        print(f'quake {quake_data["place"]} added to list')
         quake_list.append(quake_data)
+    print('quake_list complete')
     return quake_list
 
 
@@ -37,8 +41,11 @@ def insert_quakes(recents, period):
     earthquakes and inserts them into the database, checking to make sure that
     the quake isn't already there. Once it finds a duplicate it stops inserting
     '''
+    print('insertion called')
     curs = CONN.cursor()
+    print('cursor created')
     last_time = get_last_times(recents[0]['time'], period)
+    print('last quakes aquired')
     for quake in recents:
         if quake['time'] in last_time:
             print('old:', quake['place'], quake['Oceanic'])
@@ -57,7 +64,7 @@ def insert_quakes(recents, period):
             curs.close()
             CONN.commit()
             curs = CONN.cursor()
-            print(f"new: {quake['place']}, {quake['Oceanic']}")
+            print(f"new: {quake['place']}, {quake['Oceanic']} inserted")
 
 
 def get_last_times(now, period='hour'):
@@ -88,5 +95,6 @@ def get_last_times(now, period='hour'):
 def pipe_data(url):
     '''this function takes in a url, gets the recent earthquakes,
     then loads the new quakes into the database'''
+    print('pipe called')
     recents = get_recent_quakes(url)
     insert_quakes(recents, url)
