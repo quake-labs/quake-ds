@@ -7,7 +7,8 @@ def create_app():
 
     @app.route('/')
     def home():
-        return 'success, the flask API is running'
+        return jsonify({'status_code': 200,
+                        'message': 'success, the flask API is running'})
 
     @app.route('/lastQuake')
     def lastQuake():
