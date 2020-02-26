@@ -98,7 +98,7 @@ https://quake-ds-staging.herokuapp.com/lastQuake
 expected output in JSON
  - {"Oceanic":false,"id":"20km S of Trona, CA","lat":-117.4025,"lon":35.5833333,"mag":1.2,"place":1581475110360}
 
-### Connect to latest eartquake at a specified time
+### Get a list of earthquakes over the past specified period, options are ‘hour’ ‘day’ ‘week’ or ‘month’
 https://quake-ds-staging.herokuapp.com//last/{time}
 
 expected output in JSON
