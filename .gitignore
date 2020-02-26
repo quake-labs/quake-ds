@@ -113,3 +113,7 @@ config.py
 
 # the Lambda Function shouldn't be uploaded
 *.zip
+
+QuakeAPI/__pycache__
+
+QuakeAPI/.ipynb_checkpoints
