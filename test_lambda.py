@@ -8,6 +8,6 @@ if __name__=='__main__':
     while True:
         print('starting insertion')
         pipe_data(HOUR)
-        for r in query_all('SELECT time, place FROM USGS ORDER BY time desc;'):
-            print(r)
+        # for r in query_all('SELECT time, place FROM USGS ORDER BY time desc;'):
+        #     print(r)
         time.sleep(60)
