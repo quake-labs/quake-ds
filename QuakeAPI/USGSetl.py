@@ -87,43 +87,47 @@ def insert_quakes(recents, period):
     earthquakes and inserts them into the database, checking to make sure that
     the quake isn't already there. Once it finds a duplicate it stops inserting
     '''
+    print('insertion called')
     curs = CONN.cursor()
-    last_time = get_last_times(period)
+    print('cursor created')
+    last_time = get_last_times(recents[0]['time'], period)
+    print('last quakes aquired')
     for quake in recents:
         if quake['time'] in last_time:
-            print(quake['place'])
+            print('old:', quake['place'], quake['Oceanic'])
         else:
             Place = quake['place']
             Time = quake['time']
             Latitude = quake['latitude']
             Longitude = quake['longitude']
             Magnitude = quake['magnitude']
-            Oceanic = quake['tsunami']
+            Oceanic = quake['Oceanic']
             insert_query = f"""INSERT INTO USGS
-                (Place, Time, Latitude, Longitude, Magnitude, Oceanic) VALUES
-                ('{Place}', {Time}, {Latitude},
-                {Longitude}, {Magnitude}, {Oceanic})"""
+                        (Place, Time, Latitude, Longitude, Magnitude, Oceanic)
+                        VALUES ('{Place}', {Time}, {Latitude}, {Longitude},
+                        {Magnitude}, {Oceanic})"""
             curs.execute(insert_query)
             curs.close()
             CONN.commit()
             curs = CONN.cursor()
+            print(f"new: {quake['place']}, {quake['Oceanic']} inserted")
 
 
-def get_last_times(period='hour'):
-    now = int(datetime.now(tz=pytz.utc).timestamp() * 1000)
+def get_last_times(now, period='hour'):
     curs = CONN.cursor()
     times = []
     if period.upper() == 'HOUR' or period == HOUR:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-3.6e6}')
+        print('collecting one HOUR')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-3.6e6}')
         time = curs.fetchall()
     elif period.upper() == 'DAY' or period == DAY:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-8.64e7}')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-8.64e7}')
         time = curs.fetchall()
     elif period.upper() == 'WEEK' or period == WEEK:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-6.048e+8}')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-6.048e+8}')
         time = curs.fetchall()
     elif period.upper() == 'MONTH' or period == MONTH:
-        curs.execute(f'SELECT time FROM USGS WHERE time > {now-2.628e+9}')
+        curs.execute(f'SELECT time FROM USGS WHERE time >= {now-2.628e+9}')
         time = curs.fetchall()
     else:
         time = []
@@ -139,6 +143,7 @@ def pipe_data(url):
     then loads the new quakes into the database'''
     recents = get_recent_quakes(url)
     insert_quakes(recents, 'hour')
+
 
 if __name__ == '__main__':
     setup_USGS()
