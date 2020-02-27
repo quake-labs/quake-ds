@@ -151,7 +151,6 @@ def get_quakes_by_timestamp(times):
     quakes = []
     for time in times:
         quake = query_one(f'SELECT * FROM USGS WHERE time={time}')
-        print(quake)
         quakes.append({'id': quake[0],
                        'place': quake[1],
                        # time is currently in ms since epoch
