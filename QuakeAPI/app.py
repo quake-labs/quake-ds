@@ -45,6 +45,11 @@ def create_app():
                             'message':
                             get_recent_quakes(os.environ[time.upper()])})
 
+    @app.route('/test')
+    def testRoute():
+        response = query_one('SELECT * FROM USGS where time=1582252014390')
+        return jsonify(response)
+
     @app.route('/history/<lat>,<lon>,<dist>')
     def history(lat, lon, dist):
         # oof I just googled it and this is gonna be rough
