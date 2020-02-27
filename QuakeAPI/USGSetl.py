@@ -145,5 +145,30 @@ def pipe_data(url):
     insert_quakes(recents, 'hour')
 
 
+def get_quakes_by_timestamp(times):
+    '''this function takes in a list of times from the DB that is then used to
+    get all of those quakes and return them in a list.'''
+    quakes = []
+    for time in times:
+        quake = query_one(f'SELECT * FROM USGS WHERE time={time}')
+        print(quake)
+        quakes.append({'id': quake[0],
+                       'place': quake[1],
+                       # time is currently in ms since epoch
+                       'time': quake[2],
+                       'lat': quake[3],
+                       'lon': quake[4],
+                       'mag': quake[5],
+                       'Oceanic': quake[6]})
+    return quakes
+
+
+def get_now():
+    curs = CONN.cursor()
+    curs.execute('SELECT time FROM USGS ORDER BY time desc limit 1;')
+    time = curs.fetchall()
+    return time[0][0]
+
+
 if __name__ == '__main__':
     setup_USGS()
