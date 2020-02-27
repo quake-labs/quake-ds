@@ -1,8 +1,7 @@
 import requests
 import re
 from .DBQueries import *
-from datetime import datetime
-import pytz
+
 
 SOURCE = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/'
 HOUR = SOURCE + 'all_hour.geojson'
