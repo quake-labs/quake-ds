@@ -93,7 +93,7 @@ Python, Flask, Aws, Elastic Beanstalk, Heroku
 ### 3️⃣ How to connect to the data API
 ### Connect to latest earhquake data
 
-https://quake-ds-production.herokuapp.com/lastQuake
+https://quake-ds-staging.herokuapp.com/lastQuake
 
 expected output in JSON
  - {"Oceanic":false,"id":"20km S of Trona, CA","lat":-117.4025,"lon":35.5833333,"mag":1.2,"place":1581475110360}
