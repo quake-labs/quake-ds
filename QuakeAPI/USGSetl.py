@@ -181,7 +181,3 @@ def get_now():
     curs.execute('SELECT time FROM USGS ORDER BY time desc limit 1;')
     time = curs.fetchall()
     return time[0][0]
-
-
-if __name__ == '__main__':
-    setup_USGS()
