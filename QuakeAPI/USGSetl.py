@@ -144,21 +144,36 @@ def pipe_data(url):
     insert_quakes(recents, 'hour')
 
 
-def get_quakes_by_timestamp(times):
-    '''this function takes in a list of times from the DB that is then used to
-    get all of those quakes and return them in a list.'''
-    quakes = []
-    for time in times:
-        quake = query_one(f'SELECT * FROM USGS WHERE time={time}')
-        quakes.append({'id': quake[0],
-                       'place': quake[1],
-                       # time is currently in ms since epoch
-                       'time': quake[2],
-                       'lat': quake[3],
-                       'lon': quake[4],
-                       'mag': quake[5],
-                       'Oceanic': quake[6]})
-    return quakes
+def get_last_quakes(now, period='hour'):
+    curs = CONN.cursor()
+    quake_list = []
+    if period.upper() == 'HOUR' or period == HOUR:
+        print('collecting one HOUR')
+        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-3.6e6}')
+        quakes = curs.fetchall()
+    elif period.upper() == 'DAY' or period == DAY:
+        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-8.64e7}')
+        quakes = curs.fetchall()
+    elif period.upper() == 'WEEK' or period == WEEK:
+        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-6.048e+8}')
+        quakes = curs.fetchall()
+    elif period.upper() == 'MONTH' or period == MONTH:
+        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-2.628e+9}')
+        quakes = curs.fetchall()
+    else:
+        quakes = []
+
+    for quake in quakes:
+        quake_list.append({'id': quake[0],
+                           'place': quake[1],
+                           # time is currently in ms since epoch
+                           'time': quake[2],
+                           'lat': quake[3],
+                           'lon': quake[4],
+                           'mag': quake[5],
+                           'Oceanic': quake[6]})
+
+    return quake_list
 
 
 def get_now():
@@ -166,7 +181,3 @@ def get_now():
     curs.execute('SELECT time FROM USGS ORDER BY time desc limit 1;')
     time = curs.fetchall()
     return time[0][0]
-
-
-if __name__ == '__main__':
-    setup_USGS()

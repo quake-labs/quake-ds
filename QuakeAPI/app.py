@@ -42,10 +42,9 @@ def create_app():
                                         "week", or "month"'''})
         else:
             now = get_now()
-            times = get_last_times(now, time)
-            quakes = get_quakes_by_timestamp(times)
+            message = get_last_quakes(now, time)
             return jsonify({'status_code': 200,
-                            'message': quakes})
+                            'message': message})
 
     @app.route('/test')
     def testRoute():
