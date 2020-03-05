@@ -43,20 +43,19 @@ column1 = dbc.Col(
 
 
 @app.callback(
-    dash.dependencies.Output('menuItems', 'fig'),
+    dash.dependencies.Output('wheretheDataGoes', 'figure'),
     [dash.dependencies.Input('timeFrame', 'value')])
 def update_output(value):
     data = requests.get(f'https://quake-ds-production.herokuapp.com/{value}')
-    print(data.json())
-    df = pd.DataFrame(data.json()['message'])
-
-    df['lat'] = df['latitude'].apply(lambda x: str(x))
-    df['lon'] = df['longitude'].apply(lambda x: str(x))
+    df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
+        pd.DataFrame(data.json()['message'], index=[0])
+    df['lat'] = df['lat'].apply(lambda x: str(x))
+    df['lon'] = df['lon'].apply(lambda x: str(x))
 
     data = [
         go.Scattermapbox(
-            lat=df['lat'],
-            lon=df['lon'],
+            lat=df['lon'],
+            lon=df['lat'],
             mode='markers',
             marker=go.scattermapbox.Marker(
                 size=14
@@ -75,16 +74,16 @@ def update_output(value):
                 lon=0
             ),
             pitch=0,
-            zoom=1
+            zoom=.5
         ),
     )
     fig = go.Figure(data=data, layout=layout)
-    fig.update_layout(mapbox_style='stamen-terrain')
-    return data, layout
+    fig.update_layout(mapbox_style='stamen-terrain', height=700)
+    return fig
 
 
 column2 = dbc.Col([
-    dcc.Graph(id='fig'),
+    dcc.Graph(id='wheretheDataGoes'),
 ])
 
-layout = dbc.Row([column1, column2])
+layout = dbc.Row([column1, column2], style={'margin-top': 100, 'height': 1000})
