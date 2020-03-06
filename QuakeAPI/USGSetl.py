@@ -68,8 +68,8 @@ def get_recent_quakes(url):
 
         quake_data['Oceanic'] = bool(quake['properties']['tsunami'])
         quake_data['magnitude'] = quake['properties']['mag']
-        quake_data['longitude'] = quake['geometry']['coordinates'][1]
-        quake_data['latitude'] = quake['geometry']['coordinates'][0]
+        quake_data['longitude'] = quake['geometry']['coordinates'][0]
+        quake_data['latitude'] = quake['geometry']['coordinates'][1]
         quake_data['place'] = re.sub("[']", "''", quake['properties']['place'])
         quake_data['time'] = quake['properties']['time']
         quake_list.append(quake_data)
