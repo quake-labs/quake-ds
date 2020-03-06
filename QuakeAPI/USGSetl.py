@@ -36,7 +36,7 @@ def setup_USGS():
     print('table created')
     recents = get_recent_quakes(HOUR)
     print('got quakes')
-    for quake in recents:
+    for quake, i in enumerate(recents):
         Place = quake['place']
         Time = quake['time']
         Latitude = quake['latitude']
@@ -48,7 +48,7 @@ def setup_USGS():
                         VALUES
                         ('{Place}', {Time}, {Latitude}, {Longitude},
                         {Magnitude}, {Oceanic})"""
-        print(Place)
+        print(f'{i}/{len(recents)} {Place}')
         curs.execute(insert_query)
         curs.close()
         CONN.commit()
