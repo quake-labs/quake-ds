@@ -40,8 +40,8 @@ column1 = dbc.Col(
 )
 
 @app.callback(
-    dash.dependencies.Output('wheretheDataGoes', 'fig'),
-    [dash.dependencies.Input('timeFrame', 'value')])
+    Output('histogram_plot', 'figure'),
+    [Input('timeFrame', 'value')])
 def update_output(value):
     data = requests.get(f'https://quake-ds-production.herokuapp.com/{value}')
     df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
@@ -52,7 +52,7 @@ def update_output(value):
 
 
 column2 = dbc.Col([
-    dcc.Graph(id='wheretheDataGoes'),
+    dcc.Graph(id='histogram_plot'),
 ])
 
 layout = dbc.Row([column1, column2], style={'margin-top': 100, 'height': 1000})
