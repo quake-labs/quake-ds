@@ -54,8 +54,8 @@ def update_output(value):
 
     data = [
         go.Scattermapbox(
-            lat=df['lon'],
-            lon=df['lat'],
+            lat=df['lat'],
+            lon=df['lon'],
             mode='markers',
             marker=go.scattermapbox.Marker(
                 size=14
