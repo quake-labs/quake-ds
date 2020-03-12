@@ -33,7 +33,13 @@ column1 = dbc.Col(
                 ],
                 value='lastQuake'
             ),
-            html.Div(id='menuItems')
+            dcc.Slider(
+                id='magnitude',
+                min=0,
+                max=11,
+                step=.5,
+                value=5.5
+            )
         ])
     ],
     md=2,
@@ -44,9 +50,10 @@ column1 = dbc.Col(
 
 @app.callback(
     dash.dependencies.Output('wheretheDataGoes', 'figure'),
-    [dash.dependencies.Input('timeFrame', 'value')])
-def update_output(value):
-    data = requests.get(f'https://quake-ds-production.herokuapp.com/{value}')
+    [dash.dependencies.Input('timeFrame', 'value'),
+     dash.dependencies.Input('magnitude', 'value')])
+def update_output(value, mag):
+    data = requests.get(f'https://quake-ds-production.herokuapp.com/{value}/{mag}')
     df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
         pd.DataFrame(data.json()['message'], index=[0])
     df['lat'] = df['lat'].apply(lambda x: str(x))
