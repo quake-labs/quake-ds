@@ -1,5 +1,4 @@
 import unittest
-
 from Lambda_function.USGSetl import *
 from QuakeAPI.DBQueries import query_all
 

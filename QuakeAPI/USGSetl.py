@@ -36,6 +36,7 @@ def setup_USGS():
     print('table created')
     recents = get_recent_quakes(MONTH)
     print('got quakes')
+<<<<<<< HEAD
     for i, quake in enumerate(recents):
         Place = quake['place'] if quake['place'] != None else 'NULL'
         Time = quake['time'] if quake['time'] != None else 'NULL'
@@ -43,12 +44,25 @@ def setup_USGS():
         Longitude = quake['longitude'] if quake['longitude'] != None else 'NULL'
         Magnitude = quake['magnitude'] if quake['magnitude'] != None else 'NULL'
         Oceanic = quake['Oceanic'] if quake['Oceanic'] != None else 'NULL'
+=======
+    for quake, i in enumerate(recents):
+        Place = quake['place']
+        Time = quake['time']
+        Latitude = quake['latitude']
+        Longitude = quake['longitude']
+        Magnitude = quake['magnitude']
+        Oceanic = quake['Oceanic']
+>>>>>>> 82d68d7b29750863543791bcbf373a308b71864d
         insert_query = f"""INSERT INTO USGS
                         (Place, Time, Latitude, Longitude, Magnitude, Oceanic)
                         VALUES
                         ('{Place}', {Time}, {Latitude}, {Longitude},
                         {Magnitude}, {Oceanic})"""
+<<<<<<< HEAD
         print(f'{i}/{len(recents)}', Place)
+=======
+        print(f'{i}/{len(recents)} {Place}')
+>>>>>>> 82d68d7b29750863543791bcbf373a308b71864d
         curs.execute(insert_query)
         curs.close()
         CONN.commit()
