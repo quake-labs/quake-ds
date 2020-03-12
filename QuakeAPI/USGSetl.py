@@ -36,7 +36,6 @@ def setup_USGS():
     print('table created')
     recents = get_recent_quakes(MONTH)
     print('got quakes')
-<<<<<<< HEAD
     for i, quake in enumerate(recents):
         Place = quake['place'] if quake['place'] != None else 'NULL'
         Time = quake['time'] if quake['time'] != None else 'NULL'
@@ -44,25 +43,12 @@ def setup_USGS():
         Longitude = quake['longitude'] if quake['longitude'] != None else 'NULL'
         Magnitude = quake['magnitude'] if quake['magnitude'] != None else 'NULL'
         Oceanic = quake['Oceanic'] if quake['Oceanic'] != None else 'NULL'
-=======
-    for quake, i in enumerate(recents):
-        Place = quake['place']
-        Time = quake['time']
-        Latitude = quake['latitude']
-        Longitude = quake['longitude']
-        Magnitude = quake['magnitude']
-        Oceanic = quake['Oceanic']
->>>>>>> 82d68d7b29750863543791bcbf373a308b71864d
         insert_query = f"""INSERT INTO USGS
                         (Place, Time, Latitude, Longitude, Magnitude, Oceanic)
                         VALUES
                         ('{Place}', {Time}, {Latitude}, {Longitude},
                         {Magnitude}, {Oceanic})"""
-<<<<<<< HEAD
         print(f'{i}/{len(recents)}', Place)
-=======
-        print(f'{i}/{len(recents)} {Place}')
->>>>>>> 82d68d7b29750863543791bcbf373a308b71864d
         curs.execute(insert_query)
         curs.close()
         CONN.commit()
@@ -163,16 +149,20 @@ def get_last_quakes(now, period='hour', mag=5.5):
     quake_list = []
     if period.upper() == 'HOUR' or period == HOUR:
         print('collecting one HOUR')
-        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-3.6e6} and Magnitude >= {mag}')
+        curs.execute(f''''SELECT * FROM USGS WHERE time >= {now-3.6e6}
+                     and Magnitude >= {mag}''')
         quakes = curs.fetchall()
     elif period.upper() == 'DAY' or period == DAY:
-        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-8.64e7} and Magnitude >= {mag}')
+        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-8.64e7}
+                     and Magnitude >= {mag}''')
         quakes = curs.fetchall()
     elif period.upper() == 'WEEK' or period == WEEK:
-        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-6.048e+8} and Magnitude >= {mag}')
+        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-6.048e+8}
+                     and Magnitude >= {mag}''')
         quakes = curs.fetchall()
     elif period.upper() == 'MONTH' or period == MONTH:
-        curs.execute(f'SELECT * FROM USGS WHERE time >= {now-2.628e+9} and Magnitude >= {mag}')
+        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-2.628e+9}
+                     and Magnitude >= {mag}''')
         quakes = curs.fetchall()
     else:
         quakes = []
