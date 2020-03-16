@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 import requests
 import pandas as pd
+import numpy as np
 
 from app import app
 
@@ -41,7 +42,8 @@ column1 = dbc.Col(
                 min=0,
                 max=10,
                 step=.5,
-                value=5.5
+                value=5.5,
+                marks={x: str(x) for x in np.arange(.5, 11, .5)}
             )
         ])
     ],
@@ -56,7 +58,8 @@ column1 = dbc.Col(
     [dash.dependencies.Input('timeFrame', 'value'),
      dash.dependencies.Input('magnitude', 'value')])
 def update_output(value, mag):
-    data = requests.get(f'https://quake-ds-production.herokuapp.com/{value}/{mag}')
+    data = requests.get(f'https://quake-ds-staging.herokuapp.com/{value}/{float(mag)}')
+    print(data.text)
     df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
         pd.DataFrame(data.json()['message'], index=[0])
     df['lat'] = df['lat'].apply(lambda x: str(x))
@@ -68,9 +71,9 @@ def update_output(value, mag):
             lon=df['lon'],
             mode='markers',
             marker=go.scattermapbox.Marker(
-                size=14
+                size=df['mag'] + 9
             ),
-            text=df['place'],
+            text=df[['place', 'time']],
             hoverinfo='text'
         )
     ]
