@@ -15,7 +15,7 @@ column1 = dbc.Col(
         dcc.Markdown(
             """
 
-            ## This is a map of recent earthquakes
+            # This is a map of recent earthquakes
 
             select from the drop down menu what period of time you would like
             to see earthquakes for.
@@ -33,10 +33,13 @@ column1 = dbc.Col(
                 ],
                 value='lastQuake'
             ),
+            html.Div(id='menuItems')
+        ]),
+        html.Div([
             dcc.Slider(
                 id='magnitude',
                 min=0,
-                max=11,
+                max=10,
                 step=.5,
                 value=5.5
             )
@@ -45,7 +48,7 @@ column1 = dbc.Col(
     md=2,
 )
 
-#fig = go.Figure()
+# fig = go.Figure()
 
 
 @app.callback(
@@ -68,6 +71,7 @@ def update_output(value, mag):
                 size=14
             ),
             text=df['place'],
+            hoverinfo='text'
         )
     ]
 
