@@ -9,8 +9,8 @@ def history(lat, lon, dist):
     lat = radians(lat)
     lon = radians(lon)
     radius = 6371
-    top_left = 315
-    bottom_right = 135
+    top_left = radians(315)
+    bottom_right = radians(135)
 
     lat2A = asin(sin(lat) * cos(dist/radius) +
                     cos(lat) * sin(dist/radius) * cos(top_left))

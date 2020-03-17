@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from .history import history as hist
-from .USGSetl import *
+# from .USGSetl import *
 
 
 def create_app():
@@ -80,8 +80,11 @@ def create_app():
         response = query_one('SELECT * FROM USGS where time=1582252014390')
         return jsonify(response)
 
-    @app.route('/history/<float:lat>,<float:lon>,<float:dist>')
+    @app.route('/history/<lat>,<lon>,<dist>')
     def history(lat, lon, dist):
+        lat = float(lat)
+        lon = float(lon)
+        dist = float(dist)
         return hist(lat, lon, dist)
 
     return app
