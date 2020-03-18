@@ -16,10 +16,15 @@ column1 = dbc.Col(
         dcc.Markdown(
             """
 
-            # This is a map of recent earthquakes
+            ## Recent Earthquakes
+            The map at the right shows the recent earthquakes. Larger dots are
+            larger earthquakes.
 
-            select from the drop down menu what period of time you would like
+            Use the drop down menu what period of time you would like
             to see earthquakes for.
+
+            You can adjust for minimum magnitude using the slider below
+
             """
         ),
         html.Div([
@@ -37,21 +42,26 @@ column1 = dbc.Col(
             html.Div(id='menuItems')
         ]),
         html.Div([
+            dcc.Markdown("\n"),
             dcc.Slider(
                 id='magnitude',
                 min=0,
                 max=10,
                 step=.5,
-                value=5.5,
-                marks={x: str(x) for x in np.arange(.5, 11, .5)}
-            )
+                value=5.5
+            ),
+            dcc.Markdown(id='sliderOutput')
         ])
     ],
     md=2,
 )
 
 # fig = go.Figure()
-
+@app.callback(
+    dash.dependencies.Output('sliderOutput', 'children'),
+    [dash.dependencies.Input('magnitude', 'value')])
+def display_min_mag(mag_num):
+    return f"#### Minimum Magnitude {mag_num}"
 
 @app.callback(
     dash.dependencies.Output('wheretheDataGoes', 'figure'),
@@ -60,37 +70,61 @@ column1 = dbc.Col(
 def update_output(value, mag):
     data = requests.get(f'https://quake-ds-staging.herokuapp.com/{value}/{float(mag)}')
     print(data.text)
-    df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
-        pd.DataFrame(data.json()['message'], index=[0])
-    df['lat'] = df['lat'].apply(lambda x: str(x))
-    df['lon'] = df['lon'].apply(lambda x: str(x))
+    if type(data.json()['message']) == type({1:'a'}):
+        df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
+            pd.DataFrame(data.json()['message'], index=[0])
+        df['lat'] = df['lat'].apply(lambda x: str(x))
+        df['lon'] = df['lon'].apply(lambda x: str(x))
+        data = [
+            go.Scattermapbox(
+                lat=df['lat'],
+                lon=df['lon'],
+                mode='markers',
+                marker=go.scattermapbox.Marker(
+                    size=df['mag'] + 9
+                ),
+                text=df[['place', 'time']],
+                hoverinfo='text'
+            )
+        ]
 
-    data = [
-        go.Scattermapbox(
-            lat=df['lat'],
-            lon=df['lon'],
-            mode='markers',
-            marker=go.scattermapbox.Marker(
-                size=df['mag'] + 9
+        layout = go.Layout(
+            autosize=True,
+            hovermode='closest',
+            mapbox=go.layout.Mapbox(
+                bearing=0,
+                center=go.layout.mapbox.Center(
+                    lat=0,
+                    lon=0
+                ),
+                pitch=0,
+                zoom=.5
             ),
-            text=df[['place', 'time']],
-            hoverinfo='text'
         )
-    ]
+    else:
+        data = [
+            go.Scattermapbox(
+                lat=[0],
+                lon=[0],
+                mode='text',
+                text=[f"No Quakes Above {mag} available to show"],
+                textposition='middle center'
+            )
+        ]
 
-    layout = go.Layout(
-        autosize=True,
-        hovermode='closest',
-        mapbox=go.layout.Mapbox(
-            bearing=0,
-            center=go.layout.mapbox.Center(
-                lat=0,
-                lon=0
+        layout = go.Layout(
+            autosize=True,
+            mapbox=go.layout.Mapbox(
+                bearing=0,
+                center=go.layout.mapbox.Center(
+                    lat=0,
+                    lon=0
+                ),
+                pitch=0,
+                zoom=.5
             ),
-            pitch=0,
-            zoom=.5
-        ),
-    )
+        )
+
     fig = go.Figure(data=data, layout=layout)
     fig.update_layout(mapbox_style='stamen-terrain', height=700)
     return fig
