@@ -86,8 +86,6 @@ def create_app():
         lon = float(lon)
         dist = float(dist)
         coordinates = hist(lat, lon, dist)
-        print(coordinates['latA'], coordinates['lonA'])
-        print(coordinates['latB'], coordinates['lonB'])
         history_query = f'''
         SELECT * FROM USGS
         WHERE (Latitude BETWEEN {coordinates['latB']} AND {coordinates['latA']})
@@ -96,6 +94,5 @@ def create_app():
         curs = CONN.cursor()
         curs.execute(history_query)
         history = curs.fetchall()
-        print(history)
         return jsonify({'status_code': 200, 'message':history})
     return app
