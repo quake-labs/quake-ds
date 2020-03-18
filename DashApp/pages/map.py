@@ -42,7 +42,7 @@ column1 = dbc.Col(
             html.Div(id='menuItems')
         ]),
         html.Div([
-            dcc.Markdown("\n"),
+            dcc.Markdown("\n\n\n\n"),
             dcc.Slider(
                 id='magnitude',
                 min=0,
@@ -61,16 +61,16 @@ column1 = dbc.Col(
     dash.dependencies.Output('sliderOutput', 'children'),
     [dash.dependencies.Input('magnitude', 'value')])
 def display_min_mag(mag_num):
-    return f"#### Minimum Magnitude {mag_num}"
+    return f"Minimum Magnitude: {mag_num}"
 
 @app.callback(
-    dash.dependencies.Output('wheretheDataGoes', 'figure'),
+    dash.dependencies.Output('wheretheDataGoes', 'children'),
     [dash.dependencies.Input('timeFrame', 'value'),
      dash.dependencies.Input('magnitude', 'value')])
 def update_output(value, mag):
     data = requests.get(f'https://quake-ds-staging.herokuapp.com/{value}/{float(mag)}')
     print(data.text)
-    if type(data.json()['message']) == type({1:'a'}):
+    if type(data.json()['message']) == type({1:'a'}) or type(data.json()['message']) == type([1,2,3]):
         df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
             pd.DataFrame(data.json()['message'], index=[0])
         df['lat'] = df['lat'].apply(lambda x: str(x))
@@ -83,7 +83,9 @@ def update_output(value, mag):
                 marker=go.scattermapbox.Marker(
                     size=df['mag'] + 9
                 ),
-                text=df[['place', 'time']],
+                #text=df[['place', 'time','mag']],
+                text=[f"place: {x['place']}\n time: {x['time']}\n mag: {x['mag']}"
+                                for _, x in df.iterrows()],
                 hoverinfo='text'
             )
         ]
@@ -101,6 +103,7 @@ def update_output(value, mag):
                 zoom=.5
             ),
         )
+        title = ''
     else:
         data = [
             go.Scattermapbox(
@@ -113,25 +116,26 @@ def update_output(value, mag):
         ]
 
         layout = go.Layout(
-            autosize=True,
-            mapbox=go.layout.Mapbox(
-                bearing=0,
-                center=go.layout.mapbox.Center(
+             autosize=True,
+             mapbox=go.layout.Mapbox(
+                 bearing=0,
+                 center=go.layout.mapbox.Center(
                     lat=0,
                     lon=0
-                ),
-                pitch=0,
-                zoom=.5
-            ),
-        )
+                 ),
+                 pitch=0,
+                 zoom=.5
+             ),
+         )
+        title = f'No Quakes over {mag} to display'
 
     fig = go.Figure(data=data, layout=layout)
-    fig.update_layout(mapbox_style='stamen-terrain', height=700)
-    return fig
+    fig.update_layout(mapbox_style='stamen-terrain', height=700, title=title)
+    return dcc.Graph(figure=fig)
 
 
-column2 = dbc.Col([
-    dcc.Graph(id='wheretheDataGoes'),
+column2 = dbc.Col([html.Div(
+    id='wheretheDataGoes')
 ])
 
 layout = dbc.Row([column1, column2], style={'margin-top': 100, 'height': 1000})
