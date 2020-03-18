@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from .history import history as hist
-# from .USGSetl import *
+from .USGSetl import *
 
 
 def create_app():
@@ -85,6 +85,17 @@ def create_app():
         lat = float(lat)
         lon = float(lon)
         dist = float(dist)
-        return hist(lat, lon, dist)
-
+        coordinates = hist(lat, lon, dist)
+        print(coordinates['latA'], coordinates['lonA'])
+        print(coordinates['latB'], coordinates['lonB'])
+        history_query = f'''
+        SELECT * FROM USGS
+        WHERE (Latitude BETWEEN {coordinates['latB']} AND {coordinates['latA']})
+        AND (Longitude BETWEEN {coordinates['lonA']} AND {coordinates['lonB']});
+        '''
+        curs = CONN.cursor()
+        curs.execute(history_query)
+        history = curs.fetchall()
+        print(history)
+        return jsonify({'status_code': 200, 'message':history})
     return app
