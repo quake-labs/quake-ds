@@ -130,7 +130,8 @@ def get_last_times(now, period='hour'):
         time = curs.fetchall()
     else:
         time = []
-
+    curs.close()
+    CONN.commit()
     for t in time:
         times.append(t[0])
 
@@ -167,6 +168,9 @@ def get_last_quakes(now, period='hour', mag=5.5):
     else:
         quakes = []
 
+    curs.close()
+    CONN.commit()
+    
     for quake in quakes:
         quake_list.append({'id': quake[0],
                            'place': quake[1],
