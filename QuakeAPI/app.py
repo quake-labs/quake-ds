@@ -118,5 +118,7 @@ def create_app():
         curs = CONN.cursor()
         curs.execute(history_query)
         history = curs.fetchall()
+        
         return jsonify({'status_code': 200, 'message': history})
+
     return app
