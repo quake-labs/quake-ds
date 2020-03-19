@@ -29,8 +29,5 @@ def history(lat, lon, dist):
         'latB': degrees(lat2B)
     }
 
-<<<<<<< HEAD
-    return jsonify(coordinates)
-=======
+
     return coordinates
->>>>>>> cd6c30e4a3c672da39b7e7e6a026762d1b1d6e55
