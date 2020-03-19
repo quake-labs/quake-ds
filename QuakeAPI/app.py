@@ -35,6 +35,8 @@ def create_app():
             limit 1;
         ''')
         quake = curs.fetchone()
+        curs.close()
+        CONN.commit()
         response = {'id': quake[0],
                     'place': quake[1],
                     # time is currently in ms since epoch
@@ -79,6 +81,11 @@ def create_app():
     def testRoute():
         response = query_one('SELECT * FROM USGS where time=1582252014390')
         return jsonify(response)
+
+    @app.route('/resetCONN')
+    def reset_conn():
+        CONN.commit()
+        return jsonify({'status_code':200, 'message':'DB connection commited'})
 
     @app.route('/history/<float:lat>,<float:lon>,<float:dist>')
     def history(lat, lon, dist):
