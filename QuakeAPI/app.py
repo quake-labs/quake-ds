@@ -14,7 +14,7 @@ def create_app():
     @app.route('/lastQuake')
     @app.route('/lastQuake/<mag>')
     def lastQuake(mag=5.5):
-        #sanitize inputs
+        # sanitize inputs
         try:
             try:
                 magn = float(mag)
@@ -35,15 +35,18 @@ def create_app():
             limit 1;
         ''')
         quake = curs.fetchone()
-        response = {'id': quake[0],
-                    'place': quake[1],
-                    # time is currently in ms since epoch
-                    'time': quake[2],
-                    'lat': quake[3],
-                    'lon': quake[4],
-                    'mag': quake[5],
-                    'Oceanic': quake[6]} if quake!=None else f'No quakes of magnitude {mag} or higher'
-        return jsonify({'status_code': 200, 'message':response})
+        response = {
+            'id': quake[0],
+            'place': quake[1],
+            # time is currently in ms since epoch
+            'time': quake[2],
+            'lat': quake[3],
+            'lon': quake[4],
+            'mag': quake[5],
+            'Oceanic': quake[6]
+        } if quake is not None else f'No quakes of magnitude {mag} or higher'
+
+        return jsonify({'status_code': 200, 'message': response})
 
     @app.route('/last/<time>/<mag>')
     @app.route('/last/<time>')
@@ -51,7 +54,7 @@ def create_app():
         '''for now this is a super simple function that just uses the USGS API to
         get the last however many quakes. In a future release this will need to
         be improved to read out of our database'''
-        #sanitize inputs
+        # sanitize inputs
         try:
             try:
                 magn = float(mag)
@@ -82,17 +85,38 @@ def create_app():
 
     @app.route('/history/<lat>,<lon>,<dist>')
     def history(lat, lon, dist):
+        '''Start at coordinates (lat, lon) find the diagonal coordinates
+        with distance (dist) and find earthquakes within that square range'''
         lat = float(lat)
         lon = float(lon)
         dist = float(dist)
         coordinates = hist(lat, lon, dist)
+        lonA = coordinates['lonA']
+        latA = coordinates['latA']
+        lonB = coordinates['lonB']
+        latB = coordinates['latB']
+
+        if latA < lat:
+            latA = 90.0
+        if latB > lat:
+            latB = -90.0
+
+        longitude_check = f'(Longitude BETWEEN {lonA} AND {lonB})'
+        if lonA < -180:
+            lonA = lonA + 360
+            longitude_check = f'(Longitude > {lonA} AND Longitude < {lonB})'
+        if lonB > 180:
+            lonB = lonB - 360
+            longitude_check = f'(Longitude > {lonA} AND Longitude < {lonB})'
+
         history_query = f'''
         SELECT * FROM USGS
-        WHERE (Latitude BETWEEN {coordinates['latB']} AND {coordinates['latA']})
-        AND (Longitude BETWEEN {coordinates['lonA']} AND {coordinates['lonB']});
+        WHERE (Latitude BETWEEN {latB} AND {latA})
+        AND {longitude_check};
         '''
+
         curs = CONN.cursor()
         curs.execute(history_query)
         history = curs.fetchall()
-        return jsonify({'status_code': 200, 'message':history})
+        return jsonify({'status_code': 200, 'message': history})
     return app

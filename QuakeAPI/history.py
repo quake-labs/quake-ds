@@ -13,9 +13,9 @@ def history(lat, lon, dist):
     bottom_right = radians(135)
 
     lat2A = asin(sin(lat) * cos(dist/radius) +
-                    cos(lat) * sin(dist/radius) * cos(top_left))
+                 cos(lat) * sin(dist/radius) * cos(top_left))
     lat2B = asin(sin(lat) * cos(dist/radius) +
-                    cos(lat) * sin(dist/radius) * cos(bottom_right))
+                 cos(lat) * sin(dist/radius) * cos(bottom_right))
 
     lon2A = lon + atan2(sin(top_left) * sin(dist/radius) *
                         cos(lat), cos(dist/radius) - sin(lat) * sin(lat2A))
@@ -23,10 +23,10 @@ def history(lat, lon, dist):
                         cos(lat), cos(dist/radius) - sin(lat) * sin(lat2B))
 
     coordinates = {
-        "lonA": degrees(lon2A),
-        "latA": degrees(lat2A),
-        "lonB": degrees(lon2B),
-        "latB": degrees(lat2B)
+        'lonA': degrees(lon2A),
+        'latA': degrees(lat2A),
+        'lonB': degrees(lon2B),
+        'latB': degrees(lat2B)
     }
 
     return coordinates
