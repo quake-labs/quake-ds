@@ -84,7 +84,11 @@ def create_app():
 
     @app.route('/resetCONN')
     def reset_conn():
-        CONN.commit()
+        CONN = psycopg2.connect(user=os.environ['toyUSER'],
+                                password=os.environ["toyPASSWORD"],
+                                host=os.environ["toyHOST"],
+                                dbname=os.environ["toyNAME"],
+                                port=5432)
         return jsonify({'status_code':200, 'message':'DB connection commited'})
 
     @app.route('/history/<float:lat>,<float:lon>,<float:dist>')
