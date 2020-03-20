@@ -84,7 +84,7 @@ def create_app():
 
     @app.route('/resetCONN')
     def reset_conn():
-        CONN = psycopg2.connect(user=os.environ['toyUSER'],
+        global CONN = psycopg2.connect(user=os.environ['toyUSER'],
                                 password=os.environ["toyPASSWORD"],
                                 host=os.environ["toyHOST"],
                                 dbname=os.environ["toyNAME"],
