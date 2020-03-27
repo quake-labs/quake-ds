@@ -161,7 +161,7 @@ def get_last_quakes(now, period='hour', mag=5.5):
     quake_list = []
     if period.upper() == 'HOUR' or period == HOUR:
         print('collecting one HOUR')
-        curs.execute(f''''SELECT * FROM USGS WHERE time >= {now-3.6e6}
+        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-3.6e6}
                      and Magnitude >= {mag}''')
         quakes = curs.fetchall()
     elif period.upper() == 'DAY' or period == DAY:
