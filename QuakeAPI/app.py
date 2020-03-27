@@ -14,6 +14,7 @@ def create_app():
     @app.route('/lastQuake')
     @app.route('/lastQuake/<mag>')
     def lastQuake(mag=5.5):
+        CONN = connect()
         # sanitize inputs
         try:
             try:
@@ -37,6 +38,7 @@ def create_app():
         quake = curs.fetchone()
         curs.close()
         CONN.commit()
+        CONN.close()
         response = {'id': quake[0],
                     'place': quake[1],
                     # time is currently in ms since epoch
@@ -44,8 +46,8 @@ def create_app():
                     'lat': quake[3],
                     'lon': quake[4],
                     'mag': quake[5],
-                    'Oceanic': quake[6]} if quake!=None else f'No quakes of magnitude {mag} or higher'
-        return jsonify({'status_code': 200, 'message':response})
+                    'Oceanic': quake[6]} if quake != None else f'No quakes of magnitude {mag} or higher'
+        return jsonify({'status_code': 200, 'message': response})
 
     @app.route('/last/<time>/<mag>')
     @app.route('/last/<time>')
@@ -81,16 +83,6 @@ def create_app():
     def testRoute():
         response = query_one('SELECT * FROM USGS where time=1582252014390')
         return jsonify(response)
-
-    @app.route('/resetCONN')
-    def reset_conn():
-        global CONN
-        CONN = psycopg2.connect(user=os.environ['toyUSER'],
-                                password=os.environ["toyPASSWORD"],
-                                host=os.environ["toyHOST"],
-                                dbname=os.environ["toyNAME"],
-                                port=5432)
-        return jsonify({'status_code':200, 'message':'DB connection reset'})
 
     @app.route('/history/<float:lat>,<float:lon>,<float:dist>')
     def history(lat, lon, dist):
