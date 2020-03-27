@@ -90,7 +90,7 @@ def create_app():
                                 host=os.environ["toyHOST"],
                                 dbname=os.environ["toyNAME"],
                                 port=5432)
-        return jsonify({'status_code':200, 'message':'DB connection commited'})
+        return jsonify({'status_code':200, 'message':'DB connection reset'})
 
     @app.route('/history/<float:lat>,<float:lon>,<float:dist>')
     def history(lat, lon, dist):
