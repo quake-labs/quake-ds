@@ -8,7 +8,7 @@ import plotly.graph_objs as go
 import requests
 import pandas as pd
 import numpy as np
-
+import datetime
 from app import app
 
 column1 = dbc.Col(
@@ -57,11 +57,14 @@ column1 = dbc.Col(
 )
 
 # fig = go.Figure()
+
+
 @app.callback(
     dash.dependencies.Output('sliderOutput', 'children'),
     [dash.dependencies.Input('magnitude', 'value')])
 def display_min_mag(mag_num):
     return f"Minimum Magnitude: {mag_num}"
+
 
 @app.callback(
     dash.dependencies.Output('wheretheDataGoes', 'children'),
@@ -69,69 +72,84 @@ def display_min_mag(mag_num):
      dash.dependencies.Input('magnitude', 'value')])
 def update_output(value, mag):
     data = requests.get(f'https://quake-ds-staging.herokuapp.com/{value}/{float(mag)}')
-    print(data.text)
-    if type(data.json()['message']) == type({1:'a'}) or type(data.json()['message']) == type([1,2,3]):
+    if type(data.json()['message']) == type({1: 'a'}) or type(data.json()['message']) == type([1, 2, 3]) and len(data.json()['message']) >= 1:
         df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
             pd.DataFrame(data.json()['message'], index=[0])
-        df['lat'] = df['lat'].apply(lambda x: str(x))
-        df['lon'] = df['lon'].apply(lambda x: str(x))
-        data = [
-            go.Scattermapbox(
-                lat=df['lat'],
-                lon=df['lon'],
-                mode='markers',
-                marker=go.scattermapbox.Marker(
-                    size=df['mag'] + 9
-                ),
-                #text=df[['place', 'time','mag']],
-                text=[f"place: {x['place']}\n time: {x['time']}\n mag: {x['mag']}"
-                                for _, x in df.iterrows()],
-                hoverinfo='text'
-            )
-        ]
+        data, layout = loaded_fig(df)
+        if value == 'lastQuake':
+            title = f'Last Quake over {mag}'
+        else:
+            title = f"Quakes over {mag} in the last {value.strip('last/')}"
 
-        layout = go.Layout(
-            autosize=True,
-            hovermode='closest',
-            mapbox=go.layout.Mapbox(
-                bearing=0,
-                center=go.layout.mapbox.Center(
-                    lat=0,
-                    lon=0
-                ),
-                pitch=0,
-                zoom=.5
-            ),
-        )
-        title = ''
     else:
-        data = [
-            go.Scattermapbox(
-                lat=[0],
-                lon=[0],
-                mode='text',
-                text=[f"No Quakes Above {mag} available to show"],
-                textposition='middle center'
-            )
-        ]
-
-        layout = go.Layout(
-             autosize=True,
-             mapbox=go.layout.Mapbox(
-                 bearing=0,
-                 center=go.layout.mapbox.Center(
-                    lat=0,
-                    lon=0
-                 ),
-                 pitch=0,
-                 zoom=.5
-             ),
-         )
-        title = f'No Quakes over {mag} to display'
+        data, layout = empty_fig()
+        if value == 'lastQuake':
+            title = f'No Quakes over {mag} to display'
+        else:
+            title = f"No Quakes over {mag} in the last {value.strip('last/')} to display"
 
     fig = go.Figure(data=data, layout=layout)
     fig.update_layout(mapbox_style='stamen-terrain', height=700, title=title)
     return dcc.Graph(figure=fig)
+
+
+def loaded_fig(df):
+    df['lat'] = df['lat'].apply(lambda x: str(x))
+    df['lon'] = df['lon'].apply(lambda x: str(x))
+    data = [
+        go.Scattermapbox(
+            lat=df['lat'],
+            lon=df['lon'],
+            mode='markers',
+            marker=go.scattermapbox.Marker(
+                size=df['mag'] + 9
+            ),
+            #text=df[['place', 'time','mag']],
+            text=[f"""place: {x['place']}<br>UTC time: {datetime.datetime.fromtimestamp(x['time']/1000.0)}<br>mag: {x['mag']}"""
+                  for _, x in df.iterrows()],
+            hoverinfo='text'
+        )
+    ]
+
+    layout = go.Layout(
+        autosize=True,
+        hovermode='closest',
+        mapbox=go.layout.Mapbox(
+            bearing=0,
+            center=go.layout.mapbox.Center(
+                lat=0,
+                lon=0
+            ),
+            pitch=0,
+            zoom=.5
+        ),
+    )
+    return data, layout
+
+
+def empty_fig():
+    data = [
+        go.Scattermapbox(
+            lat=[0],
+            lon=[0],
+            mode='text',
+            textposition='middle center'
+        )
+    ]
+
+    layout = go.Layout(
+        autosize=True,
+        mapbox=go.layout.Mapbox(
+            bearing=0,
+            center=go.layout.mapbox.Center(
+                lat=0,
+                lon=0
+            ),
+            pitch=0,
+            zoom=.5
+        ),
+    )
+    return data, layout
 
 
 column2 = dbc.Col([html.Div(
