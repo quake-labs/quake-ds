@@ -156,6 +156,7 @@ def pipe_data(url):
 
 
 def get_last_quakes(now, period='hour', mag=5.5):
+    CONN = connect()
     curs = CONN.cursor()
     quake_list = []
     if period.upper() == 'HOUR' or period == HOUR:
