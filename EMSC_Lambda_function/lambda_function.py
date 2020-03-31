@@ -12,6 +12,7 @@ CONN = psycopg2.connect(user=toyUSER,
                         dbname=toyNAME,
                         port=5432)
 
+
 def query(query):
     curs = CONN.cursor()
     try:
@@ -21,12 +22,14 @@ def query(query):
     curs.close()
     CONN.commit()
 
+
 class EMSC_scraper():
     '''turning the functions above which pass around random data into a single
     class so that it can work as an object'''
+
     def __init__(self):
         # the page and row number to start collecting from
-        self.page_num = 0 # first thing that happens is to incriment this
+        self.page_num = 0  # first thing that happens is to incriment this
         self.row_num = 0
         # set the url that everything else will reference
         self.url = 'https://www.emsc-csem.org/Earthquake/?view='
@@ -44,7 +47,7 @@ class EMSC_scraper():
             for num, row in enumerate(rows):
                 if row['class'][0] == 'autour':
                     today = False
-                    self.row_num = num + 3 # get over the day break
+                    self.row_num = num + 3  # get over the day break
                     break
 
     def get_yesterday(self):
@@ -66,11 +69,11 @@ class EMSC_scraper():
                         '\xa0') == 'E' else -float(cells[6].text)
                     mag = float(cells[10].text)
                     place = re.sub("'", "''", cells[11].text.strip('\xa0'))
-                    self.quakes.append({'time':time,
-                                        'lat':lat,
-                                        'lon':lon,
-                                        'mag':mag,
-                                        'place':place})
+                    self.quakes.append({'time': time,
+                                        'lat': lat,
+                                        'lon': lon,
+                                        'mag': mag,
+                                        'place': place})
                 else:
                     yesterday = False
                     break
@@ -92,11 +95,13 @@ class EMSC_scraper():
 
 
 def lambda_handler(event, context):
-    query(get_last_day())
+    scraper = EMSC_scraper()
+    query(scraper.query_yesterday())
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
     }
+
 
 if __name__ == '__main__':
     scrapper = EMSC_scraper()
