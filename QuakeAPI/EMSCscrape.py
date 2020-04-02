@@ -16,12 +16,14 @@ CREATE_EMSC = '''CREATE TABLE EMSC
 
 
 def setup_EMSC(pages):
+    CONN = connect()
     curs = CONN.cursor()
     curs.execute('DROP TABLE EMSC')
     curs.execute(CREATE_EMSC)
     fill_db(pages)
     curs.close()
     CONN.commit()
+    CONN.close()
 
 
 def get_table(i):
@@ -59,6 +61,7 @@ def get_table(i):
 
 
 def fill_db(pages):
+    CONN = connect()
     curs = CONN.cursor()
     for i in range(1, pages+1):
         print(i)
@@ -68,3 +71,4 @@ def fill_db(pages):
         CONN.commit()
         curs = CONN.cursor()
         print(f'query {i} completed')
+    CONN.close()
