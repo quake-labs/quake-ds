@@ -10,15 +10,17 @@ its possible that this should have __ __ around its name.'''
 
 load_dotenv()
 
-# This needs to be switched to connect to the postgreSQL DB
-CONN = psycopg2.connect(user=os.environ['toyUSER'],
-                        password=os.environ["toyPASSWORD"],
-                        host=os.environ["toyHOST"],
-                        dbname=os.environ["toyNAME"],
-                        port=5432)
+
+def connect():
+    return psycopg2.connect(user=os.environ['toyUSER'],
+                            password=os.environ["toyPASSWORD"],
+                            host=os.environ["toyHOST"],
+                            dbname=os.environ["toyNAME"],
+                            port=5432)
 
 
 def query_one(query):
+    CONN = connect()
     curs = CONN.cursor()
     try:
         response = curs.execute(query)
@@ -30,10 +32,12 @@ def query_one(query):
         return None
     curs.close()
     CONN.commit()
+    CONN.close()
     return response
 
 
 def query_all(query):
+    CONN = connect()
     curs = CONN.cursor()
     try:
         response = curs.execute(query)
@@ -45,10 +49,12 @@ def query_all(query):
         return None
     curs.close()
     CONN.commit()
+    CONN.close()
     return response
 
 
 def query(query):
+    CONN = connect()
     curs = CONN.cursor()
     try:
         curs.execute(query)
@@ -56,3 +62,4 @@ def query(query):
         print('Query error')
     curs.close()
     CONN.commit()
+    CONN.close()

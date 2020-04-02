@@ -71,4 +71,6 @@ def fill_db(pages):
         CONN.commit()
         curs = CONN.cursor()
         print(f'query {i} completed')
+    curs.close()
+    CONN.commit()
     CONN.close()

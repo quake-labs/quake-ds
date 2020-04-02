@@ -1,1 +1,1 @@
-web: gunicorn QuakeAPI:APP -t 360
+web: gunicorn QuakeAPI:APP -t 360 --preload

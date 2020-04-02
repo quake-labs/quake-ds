@@ -23,6 +23,7 @@ def setup_USGS():
     '''this function is used to set up the initial database, it first drops the
     table if it exists and then creates a new one and fills it with the last
     month of data from USGS.'''
+    CONN = connect()
     curs = CONN.cursor()
     print('cusor created ')
     try:
@@ -53,6 +54,9 @@ def setup_USGS():
         curs.close()
         CONN.commit()
         curs = CONN.cursor()
+    curs.close()
+    CONN.commit()
+    CONN.close()
 
 
 def get_recent_quakes(url):
@@ -86,6 +90,7 @@ def insert_quakes(recents, period):
     earthquakes and inserts them into the database, checking to make sure that
     the quake isn't already there. Once it finds a duplicate it stops inserting
     '''
+    CONN = connect()
     print('insertion called')
     curs = CONN.cursor()
     print('cursor created')
@@ -110,9 +115,13 @@ def insert_quakes(recents, period):
             CONN.commit()
             curs = CONN.cursor()
             print(f"new: {quake['place']}, {quake['Oceanic']} inserted")
+    curs.close()
+    CONN.commit()
+    CONN.close()
 
 
 def get_last_times(now, period='hour'):
+    CONN = connect()
     curs = CONN.cursor()
     times = []
     if period.upper() == 'HOUR' or period == HOUR:
@@ -130,7 +139,9 @@ def get_last_times(now, period='hour'):
         time = curs.fetchall()
     else:
         time = []
-
+    curs.close()
+    CONN.commit()
+    CONN.close()
     for t in time:
         times.append(t[0])
 
@@ -145,11 +156,12 @@ def pipe_data(url):
 
 
 def get_last_quakes(now, period='hour', mag=5.5):
+    CONN = connect()
     curs = CONN.cursor()
     quake_list = []
     if period.upper() == 'HOUR' or period == HOUR:
         print('collecting one HOUR')
-        curs.execute(f''''SELECT * FROM USGS WHERE time >= {now-3.6e6}
+        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-3.6e6}
                      and Magnitude >= {mag}''')
         quakes = curs.fetchall()
     elif period.upper() == 'DAY' or period == DAY:
@@ -167,6 +179,10 @@ def get_last_quakes(now, period='hour', mag=5.5):
     else:
         quakes = []
 
+    curs.close()
+    CONN.commit()
+    CONN.close()
+
     for quake in quakes:
         quake_list.append({'id': quake[0],
                            'place': quake[1],
@@ -181,7 +197,11 @@ def get_last_quakes(now, period='hour', mag=5.5):
 
 
 def get_now():
+    CONN = connect()
     curs = CONN.cursor()
     curs.execute('SELECT time FROM USGS ORDER BY time desc limit 1;')
     time = curs.fetchall()
+    curs.close()
+    CONN.commit()
+    CONN.close()
     return time[0][0]
