@@ -44,7 +44,43 @@ def create_app():
             'lon': quake[4],
             'mag': quake[5],
             'Oceanic': quake[6]
-        } if quake is not None else f'No quakes of magnitude {mag} or higher'
+        } if quake is not None else f'No quakes of magnitude {mag} or higher in USGS'
+
+        return jsonify({'status_code': 200, 'message': response})
+
+    @app.route('/lastQuake/EMSC')
+    @app.route('/lastQuake/EMSC/<mag>')
+    def lastEMSC(mag=5.5):
+        # sanitize inputs
+        try:
+            try:
+                magn = float(mag)
+            except:
+                magn = int(mag)
+            if float(mag) < 0 or float(mag) > 11:
+                print(mag)
+                raise Exception
+        except:
+            print('this route caused an error')
+            return jsonify({'status_code': 400, 'message':
+                            'please enter a magnitude between 0 and 11'})
+        curs = CONN.cursor()
+        response = curs.execute(f'''
+            SELECT * FROM EMSC
+            WHERE mag >= {mag}
+            ORDER BY Time Desc
+            limit 1;
+        ''')
+        quake = curs.fetchone()
+        response = {
+            'id': quake[0],
+            'place': quake[1],
+            # time is currently in ms since epoch
+            'time': quake[2],
+            'lat': quake[3],
+            'lon': quake[4],
+            'mag': quake[5]
+        } if quake is not None else f'No quakes of magnitude {mag} or higher in EMSC'
 
         return jsonify({'status_code': 200, 'message': response})
 
@@ -118,7 +154,7 @@ def create_app():
         curs = CONN.cursor()
         curs.execute(history_query)
         history = curs.fetchall()
-        
+
         return jsonify({'status_code': 200, 'message': history})
 
     return app

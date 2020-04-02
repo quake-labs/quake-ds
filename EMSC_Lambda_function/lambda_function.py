@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 from config import *
 import re
+from datetime import datetime
 
 
 CONN = psycopg2.connect(user=toyUSER,
@@ -62,7 +63,10 @@ class EMSC_scraper():
             for row in rows[self.row_num:]:
                 if row['class'][0] != 'autour':
                     cells = row.find_all('td')
-                    time = row.find(class_="tabev6").find('a').text
+                    rawTime = row.find(class_="tabev6").find('a').text
+                    timestring = re.sub('\xa0\xa0\xa0', ' ', rawTime)
+                    dt = datetime.strptime(timestring, '%Y-%m-%d %H:%M:%S.%f')
+                    time = dt.timestamp() * 1000
                     lat = float(cells[4].text) if cells[5].text.strip(
                         '\xa0') == 'N' else -float(cells[4].text)
                     lon = float(cells[6].text) if cells[7].text.strip(
@@ -105,4 +109,6 @@ def lambda_handler(event, context):
 
 if __name__ == '__main__':
     scrapper = EMSC_scraper()
-    print(scrapper.query_yesterday())
+    scrapper.find_yesterday()
+    scrapper.get_yesterday()
+    print(scrapper.quakes)
