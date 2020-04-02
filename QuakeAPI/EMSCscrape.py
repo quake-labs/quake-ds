@@ -4,12 +4,12 @@ import pandas as pd
 import re
 import time
 from DBQueries import *
-
+from datetime import datetime
 
 CREATE_EMSC = '''CREATE TABLE EMSC
                 (ID SERIAL PRIMARY KEY,
                 place TEXT,
-                time TEXT,
+                time bigint,
                 lat FLOAT,
                 lon FLOAT,
                 mag FLOAT)'''
@@ -19,11 +19,12 @@ def setup_EMSC(pages):
     CONN = connect()
     curs = CONN.cursor()
     curs.execute('DROP TABLE EMSC')
+    print('Table Dropped')
     curs.execute(CREATE_EMSC)
-    fill_db(pages)
     curs.close()
     CONN.commit()
     CONN.close()
+    fill_db(pages)
 
 
 def get_table(i):
@@ -41,21 +42,24 @@ def get_table(i):
         print(f'request {i} returned no table, trying again')
         return get_table(i)
     page_insert = 'INSERT INTO EMSC (place, time, lat, lon, mag) VALUES '
-    for row in rows:
+    for i, row in enumerate(rows):
         try:
             cells = row.find_all('td')
-            time = pd.to_datetime(row.find(class_="tabev6")
-                                  .find('a').text)
+            rawTime = row.find(class_="tabev6").find('a').text
+            timestring = re.sub('\xa0\xa0\xa0', ' ', rawTime)
+            dt = datetime.strptime(timestring, '%Y-%m-%d %H:%M:%S.%f')
+            time = dt.timestamp() * 1000
             lat = float(cells[4].text) if cells[5].text.strip(
                 '\xa0') == 'N' else -float(cells[4].text)
             lon = float(cells[6].text) if cells[7].text.strip(
                 '\xa0') == 'E' else -float(cells[6].text)
             mag = float(cells[10].text)
             place = re.sub("'", "''", cells[11].text.strip('\xa0'))
+            row_insert = f"('{place}', '{time}', {lat}, {lon}, {mag}), "
+            page_insert += row_insert
+            print(f'row {i}, {place} added')
         except:
             print('passed row')
-        row_insert = f"('{place}', '{time}', {lat}, {lon}, {mag}), "
-        page_insert += row_insert
 
     return page_insert[:-2]+';'
 
@@ -64,13 +68,19 @@ def fill_db(pages):
     CONN = connect()
     curs = CONN.cursor()
     for i in range(1, pages+1):
-        print(i)
+        print(f'starting page {i}')
         query = get_table(i)
+        print('starting insertion')
         curs.execute(query)
+        print('insertion complete')
         curs.close()
         CONN.commit()
         curs = CONN.cursor()
-        print(f'query {i} completed')
+        print(f'page {i} completed')
     curs.close()
     CONN.commit()
     CONN.close()
+
+
+if __name__ == '__main__':
+    setup_EMSC(10)
