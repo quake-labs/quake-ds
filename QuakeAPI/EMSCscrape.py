@@ -18,7 +18,7 @@ CREATE_EMSC = '''CREATE TABLE EMSC
 def setup_EMSC(pages):
     CONN = connect()
     curs = CONN.cursor()
-    curs.execute('DROP TABLE EMSC')
+    curs.execute('DROP TABLE IF EXISTS EMSC')
     print('Table Dropped')
     curs.execute(CREATE_EMSC)
     curs.close()
@@ -55,9 +55,9 @@ def get_table(i):
                 '\xa0') == 'E' else -float(cells[6].text)
             mag = float(cells[10].text)
             place = re.sub("'", "''", cells[11].text.strip('\xa0'))
-            row_insert = f"('{place}', '{time}', {lat}, {lon}, {mag}), "
+            row_insert = f"('{place}', {time}, {lat}, {lon}, {mag}), "
             page_insert += row_insert
-            print(f'row {i}, {place} added')
+            #print(f'row {i}, {place} added')
         except:
             print('passed row')
 
@@ -83,4 +83,4 @@ def fill_db(pages):
 
 
 if __name__ == '__main__':
-    setup_EMSC(10)
+    setup_EMSC(2000)
