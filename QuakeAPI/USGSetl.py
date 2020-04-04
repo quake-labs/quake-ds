@@ -81,6 +81,7 @@ def get_recent_quakes(url):
 
 
 def print_results(results):
+    '''This is a helper function that makes it a little more human readable'''
     for result in results:
         print(result['time'], result['place'])
 
@@ -88,7 +89,9 @@ def print_results(results):
 def insert_quakes(recents, period):
     '''this function takes in an extracted and transformed list of recent
     earthquakes and inserts them into the database, checking to make sure that
-    the quake isn't already there. Once it finds a duplicate it stops inserting
+    the quake isn't already there.
+    It checks for duplicate quakes using the timestamp and only enters unique
+    quakes
     '''
     CONN = connect()
     print('insertion called')
@@ -156,6 +159,11 @@ def pipe_data(url):
 
 
 def get_last_quakes(now, period='hour', mag=5.5):
+    '''This function gets the last quakese over a given period and magnitude.
+    Now is time in unix time (MS), generally comes from the last quake in the
+    DB
+    Period is 'HOUR', 'DAY', 'WEEK', or 'MONTH'
+    Mag is a float with default value 5.5'''
     CONN = connect()
     curs = CONN.cursor()
     quake_list = []

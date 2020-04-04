@@ -11,8 +11,8 @@ def create_app():
         return jsonify({'status_code': 200,
                         'message': 'success, the flask API is running'})
 
-    @app.route('/lastQuake')
-    @app.route('/lastQuake/<mag>')
+    @app.route('/lastQuake/USGS')
+    @app.route('/lastQuake/USGS/<mag>')
     def lastQuake(mag=5.5):
         CONN = connect()
         # sanitize inputs
@@ -88,9 +88,10 @@ def create_app():
     @app.route('/last/<time>/<mag>')
     @app.route('/last/<time>')
     def getTime(time, mag=5.5):
-        '''for now this is a super simple function that just uses the USGS API to
-        get the last however many quakes. In a future release this will need to
-        be improved to read out of our database'''
+        '''This route pulls the last quakes from USGS over the specified time
+        frame that are at or above the specified magnitude.
+        Defualt Mag is 5.5
+        Options for time are 'HOUR', 'DAY', 'WEEK', or 'MONTH' '''
         # sanitize inputs
         try:
             try:
