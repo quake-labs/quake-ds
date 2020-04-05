@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from .history import history as hist
-from .USGSetl import *
+from .api_funcs import *
 
 
 def create_app():
