@@ -29,15 +29,25 @@ column1 = dbc.Col(
         ),
         html.Div([
             dcc.Dropdown(
+                id='source',
+                options=[
+                    {'label': 'USGS', 'value': 'USGS'},
+                    {'label': 'EMSC', 'value': 'EMSC'},
+                    {'label': 'Both', 'value': 'Either USGS or EMSC'}
+                ],
+                value='USGS'
+            ),
+
+            dcc.Dropdown(
                 id='timeFrame',
                 options=[
-                    {'label': 'Last Quake', 'value': 'lastQuake'},
-                    {'label': 'Last Hour', 'value': 'last/hour'},
-                    {'label': 'Last Day', 'value': 'last/day'},
-                    {'label': 'Last Week', 'value': 'last/week'},
-                    {'label': 'Last Month', 'value': 'last/month'}
+                    {'label': 'Last Quake', 'value': 'Quake'},
+                    {'label': 'Last Hour', 'value': '/hour'},
+                    {'label': 'Last Day', 'value': '/day'},
+                    {'label': 'Last Week', 'value': '/week'},
+                    {'label': 'Last Month', 'value': '/month'}
                 ],
-                value='lastQuake'
+                value='Quake'
             ),
             html.Div(id='menuItems')
         ]),
@@ -69,24 +79,29 @@ def display_min_mag(mag_num):
 @app.callback(
     dash.dependencies.Output('wheretheDataGoes', 'children'),
     [dash.dependencies.Input('timeFrame', 'value'),
-     dash.dependencies.Input('magnitude', 'value')])
-def update_output(value, mag):
-    data = requests.get(f'https://quake-ds-staging.herokuapp.com/{value}/{float(mag)}')
+     dash.dependencies.Input('magnitude', 'value'),
+     dash.dependencies.Input('source', 'value')])
+def update_output(value, mag, source):
+    if value == 'Quake':
+        api_url = f'https://quake-ds-staging.herokuapp.com/last{value}/{source}/{float(mag)}'
+    else:
+        api_url = f'https://quake-ds-staging.herokuapp.com/last/{source}/{value}/{float(mag)}'
+    data = requests.get(api_url)
     if type(data.json()['message']) == type({1: 'a'}) or type(data.json()['message']) == type([1, 2, 3]) and len(data.json()['message']) >= 1:
-        df = pd.DataFrame(data.json()['message']) if value != 'lastQuake' else \
+        df = pd.DataFrame(data.json()['message']) if value != 'Quake' else \
             pd.DataFrame(data.json()['message'], index=[0])
         data, layout = loaded_fig(df)
-        if value == 'lastQuake':
-            title = f'Last Quake over {mag}'
+        if value == 'Quake':
+            title = f'Last Quake over {mag} in {source}'
         else:
-            title = f"Quakes over {mag} in the last {value.strip('last/')}"
+            title = f"Quakes over {mag} in the last {value.strip('last/')} in {source}"
 
     else:
         data, layout = empty_fig()
-        if value == 'lastQuake':
-            title = f'No Quakes over {mag} to display'
+        if value == 'Quake':
+            title = f'No Quakes over {mag} to display in {source}'
         else:
-            title = f"No Quakes over {mag} in the last {value.strip('last/')} to display"
+            title = f"No Quakes over {mag} in the last {value.strip('last/')} to display in {source}"
 
     fig = go.Figure(data=data, layout=layout)
     fig.update_layout(mapbox_style='stamen-terrain', height=700, title=title)
