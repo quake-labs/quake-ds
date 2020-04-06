@@ -21,19 +21,19 @@ def get_last_quakes(now, source, period='hour', mag=5.5):
     CONN = connect()
     curs = CONN.cursor()
     quake_list = []
-    if period.upper() == 'HOUR' or period == HOUR:
+    if period.upper() == 'HOUR':
         curs.execute(f'''SELECT * FROM {source} WHERE time >= {now-3.6e6}
                      and Magnitude >= {mag}''')
         quakes = curs.fetchall()
-    elif period.upper() == 'DAY' or period == DAY:
+    elif period.upper() == 'DAY':
         curs.execute(f'''SELECT * FROM {source} WHERE time >= {now-8.64e7}
                      and Magnitude >= {mag}''')
         quakes = curs.fetchall()
-    elif period.upper() == 'WEEK' or period == WEEK:
+    elif period.upper() == 'WEEK':
         curs.execute(f'''SELECT * FROM {source} WHERE time >= {now-6.048e+8}
                      and Magnitude >= {mag}''')
         quakes = curs.fetchall()
-    elif period.upper() == 'MONTH' or period == MONTH:
+    elif period.upper() == 'MONTH':
         curs.execute(f'''SELECT * FROM {source} WHERE time >= {now-2.628e+9}
                      and Magnitude >= {mag}''')
         quakes = curs.fetchall()
@@ -45,15 +45,7 @@ def get_last_quakes(now, source, period='hour', mag=5.5):
     CONN.close()
 
     for quake in quakes:
-        quake_list.append({'id': quake[0],
-                           'place': quake[1],
-                           # time is currently in ms since epoch
-                           'time': quake[2],
-                           'lat': quake[3],
-                           'lon': quake[4],
-                           'mag': quake[5],
-                           'Oceanic': quake[6] if source == 'USGS' else None})
-
+        quake_list.append(prep_response(quake, source))
     return quake_list
 
 
@@ -69,3 +61,32 @@ def get_now():
     CONN.commit()
     CONN.close()
     return time[0][0]
+
+
+def prep_response(quake, source):
+    '''a small helper function that takes quakes from the DB and restructures
+    them into a simple dictionary to make values human readable'''
+    response = {
+        'id': quake[0],
+        'place': quake[1],
+        # time is currently in ms since epoch
+        'time': quake[2],
+        'lat': quake[3],
+        'lon': quake[4],
+        'mag': quake[5]}
+    if source == 'USGS':
+        response['Oceanic'] = quake[6]
+    return response
+
+
+def sanitize_mag(mag):
+    '''this is a helper function that sanitizes the input of a magnitude for
+    when it is entered in the API call. It checks to insure that it is a number
+    between 0 and 11 and raises an error if they aren't'''
+    try:
+        magn = float(mag)
+    except:
+        magn = int(mag)
+    if float(mag) < 0 or float(mag) > 11:
+        print(mag)
+        raise Exception

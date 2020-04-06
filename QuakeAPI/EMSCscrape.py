@@ -8,11 +8,11 @@ from datetime import datetime
 
 CREATE_EMSC = '''CREATE TABLE EMSC
                 (ID SERIAL PRIMARY KEY,
-                place TEXT,
-                time bigint,
-                lat FLOAT,
-                lon FLOAT,
-                mag FLOAT)'''
+                Place text,
+                Time bigint,
+                Latitude float,
+                Longitude float,
+                Magnitude float)'''
 
 
 def setup_EMSC(pages):
@@ -41,7 +41,7 @@ def get_table(i):
     except:
         print(f'request {i} returned no table, trying again')
         return get_table(i)
-    page_insert = 'INSERT INTO EMSC (place, time, lat, lon, mag) VALUES '
+    page_insert = 'INSERT INTO EMSC (Place, Time, Latitude, Longitude, Magnitude) VALUES '
     for i, row in enumerate(rows):
         try:
             cells = row.find_all('td')
@@ -83,4 +83,4 @@ def fill_db(pages):
 
 
 if __name__ == '__main__':
-    setup_EMSC(2000)
+    setup_EMSC(20)
