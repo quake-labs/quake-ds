@@ -33,7 +33,6 @@ column1 = dbc.Col(
                 options=[
                     {'label': 'USGS', 'value': 'USGS'},
                     {'label': 'EMSC', 'value': 'EMSC'},
-                    {'label': 'Both', 'value': 'Either USGS or EMSC'}
                 ],
                 value='USGS'
             ),

@@ -8,9 +8,10 @@
 
 🚫 Each student has a required minimum number of meaningful PRs each week per the rubric.  Contributing to docs does NOT count as a PR to meet your weekly requirements.
 
-# 1️⃣ Title of project goes here
+# Quake API
 
-You can find the project at [🚫URL NAME GOES HERE](🚫copy and paste URL here).
+You can find the project at [Quake Production API](https://quake-ds-production.herokuapp.com).
+
 
 ## 5️⃣ Contributors
 
@@ -36,16 +37,26 @@ You can find the project at [🚫URL NAME GOES HERE](🚫copy and paste URL here
 ## Project Overview
 
 
-1️⃣ [Trello Board](🚫add link to trello board here)
+1️⃣ [Trello Board](https://trello.com/b/5WH9iB9n/labspt7-quake)
 
 1️⃣ [Product Canvas](🚫add link to product canvas here)
 
-🚫 Replace lorem ipsum with a description of your project
+There are several routes to get out information about earthquakes:
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+/lastQuake/[source]/[magnitude]
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Where source is either USGS or EMSC, depending on which data source you would like to draw information from. In a future release this will be updated to include an option for both sources once we merge them.
 
+Magnitude is a number from 0-11 representing the minimum magnitude of earthquakes that you would like to see returned.
+
+
+/last/[time]/[source]/[magnitude]
+
+For this time is one of 'hour', 'day', 'week', or 'month'. These time frames were selected to match the USGS API, in a future release this may be updated to be more flexible.
+
+Source and Magnitude are the same as before.
+
+/
 🚫  delete if front end is not applicable to your project
 
 1️⃣ [Deployed Front End](🚫add link to deployed app here)
@@ -146,4 +157,3 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 See [Backend Documentation](_link to your backend readme here_) for details on the backend of our project.
 
 See [Front End Documentation](_link to your front end readme here_) for details on the front end of our project.
-
