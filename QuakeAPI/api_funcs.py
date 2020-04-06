@@ -1,6 +1,7 @@
 from .DBQueries import *
 import re
 
+
 '''this file will contain all the general functions the API needs to mess with
 quakes. It is being pulled from USGSetl and EMSCscrape'''
 
@@ -50,7 +51,7 @@ def get_last_quakes(now, source, period='hour', mag=5.5):
 
 
 def get_now():
-    '''a funciton to get the time of the last quake to get an approximate
+    '''a funciton to get the time of the last quake in USGS to get an approximate
     estimation of the current time. This method was selected for simplicity.'''
 
     CONN = connect()
@@ -77,16 +78,3 @@ def prep_response(quake, source):
     if source == 'USGS':
         response['Oceanic'] = quake[6]
     return response
-
-
-def sanitize_mag(mag):
-    '''this is a helper function that sanitizes the input of a magnitude for
-    when it is entered in the API call. It checks to insure that it is a number
-    between 0 and 11 and raises an error if they aren't'''
-    try:
-        magn = float(mag)
-    except:
-        magn = int(mag)
-    if float(mag) < 0 or float(mag) > 11:
-        print(mag)
-        raise Exception

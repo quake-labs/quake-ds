@@ -11,8 +11,9 @@ def create_app():
         return jsonify({'status_code': 200,
                         'message': 'success, the flask API is running'})
 
-    @app.route('/lastQuake/<source>')
-    @app.route('/lastQuake/<source>/<float:mag>')
+    @app.route('/lastQuake/<source>/')
+    @app.route('/lastQuake/<source>/<float:mag>/')
+    @app.route('/lastQuake/<source>/<int:mag>/')
     def lastQuake(source, mag=5.5):
         CONN = connect()
         # sanitize inputs
@@ -35,11 +36,12 @@ def create_app():
         CONN.commit()
         CONN.close()
         response = prep_response(quake, source) if quake is not None \
-            else f'No quakes of magnitude {mag} or higher in {source}'
+            else f'No quakes of magnitude {mag} or higher in {source.upper()}'
         return jsonify({'status_code': 200, 'message': response})
 
-    @app.route('/last/<source>/<time>/<mag>')
-    @app.route('/last/<source>/<time>')
+    @app.route('/last/<source>/<time>/<float:mag>/')
+    @app.route('/last/<source>/<time>/<int:mag>/')
+    @app.route('/last/<source>/<time>/')
     def getTime(time, source, mag=5.5):
         '''This route pulls the last quakes from USGS over the specified time
         frame that are at or above the specified magnitude.
@@ -47,23 +49,21 @@ def create_app():
         Mag is a float with default 5.5
         Options for time are 'HOUR', 'DAY', 'WEEK', or 'MONTH' '''
         # sanitize inputs
-        try:
-            sanitize_mag(mag)
-        except:
-            print('this route caused an error')
+        if mag < 0 or mag > 11:
             return jsonify({'status_code': 400, 'message':
                             'please enter a magnitude between 0 and 11'})
-
         # verify that time is a valid input
         if time.upper() not in ['HOUR', 'DAY', 'WEEK', 'MONTH']:
             return jsonify({'status_code': 400,
                             'message': '''please choose from "hour", "day",
                                         "week", or "month"'''})
+        # check that source is a valid input
         if source.upper() not in ['USGS', 'EMSC']:
             return jsonify({'status_code': 400,
                             'message': 'Please select either USGS or EMSC as source'})
-        now = get_now()
-        message = get_last_quakes(now, source, time, mag)
+        message = get_last_quakes(get_now(), source, time, mag)
+        message = message if len(message) != 0 else \
+            f'no quakes above {mag} in {source.upper()} in the last {time.lower()}'
         return jsonify({'status_code': 200,
                         'message': message})
 
