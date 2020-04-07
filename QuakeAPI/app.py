@@ -72,10 +72,12 @@ def create_app():
         response = query_one('SELECT * FROM USGS where time=1582252014390')
         return jsonify(response)
 
-    @app.route('/history/<float:lat>,<float:lon>,<float:dist>')
+    @app.route('/history/<lat>,<lon>,<dist>')
     def history(lat, lon, dist):
         '''Start at coordinates (lat, lon) find the diagonal coordinates
         with distance (dist) and find earthquakes within that square range'''
+
+        CONN = connect()
         lat = float(lat)
         lon = float(lon)
         dist = float(dist)
@@ -84,6 +86,7 @@ def create_app():
         latA = coordinates['latA']
         lonB = coordinates['lonB']
         latB = coordinates['latB']
+        print(coordinates)
 
         if latA < lat:
             latA = 90.0
@@ -97,6 +100,9 @@ def create_app():
         if lonB > 180:
             lonB = lonB - 360
             longitude_check = f'(Longitude > {lonA} AND Longitude < {lonB})'
+        
+        print(latA, latB, lonA, lonB)
+        print('check', longitude_check)
 
         history_query = f'''
         SELECT * FROM USGS
@@ -104,9 +110,12 @@ def create_app():
         AND {longitude_check};
         '''
 
+        print('query', history_query)
+
         curs = CONN.cursor()
         curs.execute(history_query)
         history = curs.fetchall()
+        CONN.close()
 
         return jsonify({'status_code': 200, 'message': history})
 
