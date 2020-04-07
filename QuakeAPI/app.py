@@ -14,6 +14,7 @@ def create_app():
     @app.route('/lastQuake')
     @app.route('/lastQuake/<mag>')
     def lastQuake(mag=5.5):
+        CONN = connect()
         # sanitize inputs
         try:
             try:
@@ -35,17 +36,17 @@ def create_app():
             limit 1;
         ''')
         quake = curs.fetchone()
-        response = {
-            'id': quake[0],
-            'place': quake[1],
-            # time is currently in ms since epoch
-            'time': quake[2],
-            'lat': quake[3],
-            'lon': quake[4],
-            'mag': quake[5],
-            'Oceanic': quake[6]
-        } if quake is not None else f'No quakes of magnitude {mag} or higher'
-
+        curs.close()
+        CONN.commit()
+        CONN.close()
+        response = {'id': quake[0],
+                    'place': quake[1],
+                    # time is currently in ms since epoch
+                    'time': quake[2],
+                    'lat': quake[3],
+                    'lon': quake[4],
+                    'mag': quake[5],
+                    'Oceanic': quake[6]} if quake != None else f'No quakes of magnitude {mag} or higher'
         return jsonify({'status_code': 200, 'message': response})
 
     @app.route('/last/<time>/<mag>')
@@ -83,7 +84,7 @@ def create_app():
         response = query_one('SELECT * FROM USGS where time=1582252014390')
         return jsonify(response)
 
-    @app.route('/history/<lat>,<lon>,<dist>')
+    @app.route('/history/<float:lat>,<float:lon>,<float:dist>')
     def history(lat, lon, dist):
         '''Start at coordinates (lat, lon) find the diagonal coordinates
         with distance (dist) and find earthquakes within that square range'''
@@ -118,7 +119,7 @@ def create_app():
         curs = CONN.cursor()
         curs.execute(history_query)
         history = curs.fetchall()
-        
+
         return jsonify({'status_code': 200, 'message': history})
 
     return app
