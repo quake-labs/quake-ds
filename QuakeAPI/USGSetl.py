@@ -80,15 +80,12 @@ def get_recent_quakes(url):
     return quake_list
 
 
-def print_results(results):
-    for result in results:
-        print(result['time'], result['place'])
-
-
 def insert_quakes(recents, period):
     '''this function takes in an extracted and transformed list of recent
     earthquakes and inserts them into the database, checking to make sure that
-    the quake isn't already there. Once it finds a duplicate it stops inserting
+    the quake isn't already there.
+    It checks for duplicate quakes using the timestamp and only enters unique
+    quakes
     '''
     CONN = connect()
     print('insertion called')
@@ -153,55 +150,3 @@ def pipe_data(url):
     then loads the new quakes into the database'''
     recents = get_recent_quakes(url)
     insert_quakes(recents, 'hour')
-
-
-def get_last_quakes(now, period='hour', mag=5.5):
-    CONN = connect()
-    curs = CONN.cursor()
-    quake_list = []
-    if period.upper() == 'HOUR' or period == HOUR:
-        print('collecting one HOUR')
-        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-3.6e6}
-                     and Magnitude >= {mag}''')
-        quakes = curs.fetchall()
-    elif period.upper() == 'DAY' or period == DAY:
-        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-8.64e7}
-                     and Magnitude >= {mag}''')
-        quakes = curs.fetchall()
-    elif period.upper() == 'WEEK' or period == WEEK:
-        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-6.048e+8}
-                     and Magnitude >= {mag}''')
-        quakes = curs.fetchall()
-    elif period.upper() == 'MONTH' or period == MONTH:
-        curs.execute(f'''SELECT * FROM USGS WHERE time >= {now-2.628e+9}
-                     and Magnitude >= {mag}''')
-        quakes = curs.fetchall()
-    else:
-        quakes = []
-
-    curs.close()
-    CONN.commit()
-    CONN.close()
-
-    for quake in quakes:
-        quake_list.append({'id': quake[0],
-                           'place': quake[1],
-                           # time is currently in ms since epoch
-                           'time': quake[2],
-                           'lat': quake[3],
-                           'lon': quake[4],
-                           'mag': quake[5],
-                           'Oceanic': quake[6]})
-
-    return quake_list
-
-
-def get_now():
-    CONN = connect()
-    curs = CONN.cursor()
-    curs.execute('SELECT time FROM USGS ORDER BY time desc limit 1;')
-    time = curs.fetchall()
-    curs.close()
-    CONN.commit()
-    CONN.close()
-    return time[0][0]
