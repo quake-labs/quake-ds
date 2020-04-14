@@ -2,11 +2,6 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/9a013b0434bf5dabd26c/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/quake-ds/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9a013b0434bf5dabd26c/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/quake-ds/test_coverage)
 
-🚫 Note: All lines that start with 🚫 are instructions and should be deleted before this is posted to your portfolio. This is intended to be a guideline. Feel free to add your own flare to it.
-
-🚫 The numbers 1️⃣ through 5️⃣ next to each item represent the week that part of the docs needs to be comepleted by.  Make sure to delete the numbers by the end of Labs.
-
-🚫 Each student has a required minimum number of meaningful PRs each week per the rubric.  Contributing to docs does NOT count as a PR to meet your weekly requirements.
 
 # Quake API
 
@@ -15,11 +10,10 @@ You can find the project at [Quake Production API](https://quake-ds-production.h
 
 ## 5️⃣ Contributors
 
-🚫Add contributor info below, make sure add images and edit the social links for each member. Add to or delete these place-holders as needed
 
 |                                       [Eyve Geordan](https://github.com/eyvonne)                                        |                                       [J Tyler Sheppard](https://github.com/jtsheppard)                                        |                                       [Ashwin Swamy](https://github.com/ash12hub)                                        |
 | :-----------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
-|                      [<img src="https://github.com/Lambda-School-Labs/quake-ds/blob/Documentation/IMG_1754%202.jpg" width = "200" />](https://github.com/eyvonne)                       |                      [<img src="https://github.com/Lambda-School-Labs/quake-ds/blob/Documentation/Tyler.jpg" width = "200" />](https://github.com/jtsheppard)                       |                      [<img src="https://www.dalesjewelers.com/wp-content/uploads/2018/10/placeholder-silhouette-male.png" width = "200" />](https://github.com/ash12hub)                      |
+|                      [<img src="https://github.com/Lambda-School-Labs/quake-ds/blob/Documentation/IMG_1754%202.jpg" width = "200" />](https://github.com/eyvonne)                       |                      [<img src="https://github.com/Lambda-School-Labs/quake-ds/blob/Documentation/Tyler.jpg" width = "200" />](https://github.com/jtsheppard)                       |                      [<img src="https://github.com/Lambda-School-Labs/quake-ds/blob/Documentation/ashwin.jpg" width = "200" />](https://github.com/ash12hub)                      |
 |                 [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/eyvonne)                 |            [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/jtsheppard)             |           [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/ash12hub)            |
 | [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/in/eyvonne-geordan-2a2b55168/) | [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/in/jtsheppard/) | [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/) |
 
