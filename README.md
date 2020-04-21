@@ -53,14 +53,6 @@ Source and Magnitude are the same as before.
 
 Python, Flask, Aws, Elastic Beanstalk, Heroku
 
-### 2️⃣ Explanatory Variables
-
--   Explanatory Variable 1
--   Explanatory Variable 2
--   Explanatory Variable 3
--   Explanatory Variable 4
--   Explanatory Variable 5
-
 ### Data Sources
 
 -   [Source 1] (https://earthquake.usgs.gov/earthquakes/search/)
@@ -71,7 +63,7 @@ Python, Flask, Aws, Elastic Beanstalk, Heroku
 [Python Notebook 1](https://colab.research.google.com/drive/1g_zGrP7LCK4FNdJycQQcRJ_22iKL0_F6)
 
 
-### 3️⃣ How to connect to the data API
+### How to connect to the data API
 ### Connect to latest earhquake data
 
 https://quake-ds-staging.herokuapp.com/lastQuake
