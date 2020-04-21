@@ -8,7 +8,7 @@
 You can find the project at [Quake Production API](https://quake-ds-production.herokuapp.com).
 
 
-## 5️⃣ Contributors
+### 3️⃣ Contributors
 
 
 |                                       [Eyve Geordan](https://github.com/eyvonne)                                        |                                       [J Tyler Sheppard](https://github.com/jtsheppard)                                        |                                       [Ashwin Swamy](https://github.com/ash12hub)                                        |
