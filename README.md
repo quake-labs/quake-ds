@@ -49,11 +49,9 @@ Source and Magnitude are the same as before.
 
 /
 
-
 ### Tech Stack
 
 Python, Flask, Aws, Elastic Beanstalk, Heroku
-
 
 ### 2️⃣ Explanatory Variables
 
@@ -64,28 +62,14 @@ Python, Flask, Aws, Elastic Beanstalk, Heroku
 -   Explanatory Variable 5
 
 ### Data Sources
-🚫  Add to or delete souce links as needed for your project
 
-
--   [Source 1] (🚫add link to python notebook here)
--   [Source 2] (🚫add link to python notebook here)
--   [Source 3] (🚫add link to python notebook here)
--   [Source 4] (🚫add link to python notebook here)
--   [Source 5] (🚫add link to python notebook here)
+-   [Source 1] (https://earthquake.usgs.gov/earthquakes/search/)
+-   [Source 2] (https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php)
 
 ### Python Notebooks
 
-🚫  Add to or delete python notebook links as needed for your project
+[Python Notebook 1](https://github.com/Lambda-School-Labs/quake-ds/blob/Documentation/Quake.ipynb)
 
-[Python Notebook 1](🚫add link to python notebook here)
-
-[Python Notebook 2](🚫add link to python notebook here)
-
-[Python Notebook 3](🚫add link to python notebook here)
-
-### 3️⃣ How to connect to the web API
-
-🚫 List directions on how to connect to the API here
 
 ### 3️⃣ How to connect to the data API
 ### Connect to latest earhquake data
