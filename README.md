@@ -68,7 +68,7 @@ Python, Flask, Aws, Elastic Beanstalk, Heroku
 
 ### Python Notebooks
 
-[Python Notebook 1](https://github.com/Lambda-School-Labs/quake-ds/blob/Documentation/Quake.ipynb)
+[Python Notebook 1](https://colab.research.google.com/drive/1g_zGrP7LCK4FNdJycQQcRJ_22iKL0_F6)
 
 
 ### 3️⃣ How to connect to the data API
