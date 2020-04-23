@@ -2,7 +2,7 @@
 ![Python Version](https://img.shields.io/badge/python-v3.7-blue)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9a013b0434bf5dabd26c/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/quake-ds/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/9a013b0434bf5dabd26c/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/quake-ds/test_coverage)
+
 
 
 # Quake API
