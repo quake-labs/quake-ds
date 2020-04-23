@@ -66,9 +66,9 @@ Staging Endpoint 👉 https://quake-ds-staging.herokuapp.com/
 
 ## 5️⃣ Data Sources
 
--   [USGS Source 1] (https://earthquake.usgs.gov/earthquakes/search/)
--   [USGS Source 2] (https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php)
--   [ESMC] (https://www.emsc-csem.org/Earthquake/seismologist.php)
+-   [USGS Source 1](https://earthquake.usgs.gov/earthquakes/search/)
+-   [USGS Source 2](https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php)
+-   [ESMC](https://www.emsc-csem.org/Earthquake/seismologist.php)
 
 ### Extra Python Notebooks
 
