@@ -1,14 +1,19 @@
-
+![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg)
+![Python Version](https://img.shields.io/badge/python-v3.7-blue)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9a013b0434bf5dabd26c/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/quake-ds/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9a013b0434bf5dabd26c/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/quake-ds/test_coverage)
 
 
 # Quake API
 
-You can find the project at [Quake Production API](https://quake-ds-production.herokuapp.com).
+## 1️⃣ Project Overview
 
+1️⃣ [Trello Board](https://trello.com/b/5WH9iB9n/labspt7-quake)
 
-### 3️⃣ Contributors
+2️⃣ [Product Canvas](https://www.notion.so/User-Research-8cd64de109404266b2537457a426738d)
+
+## 2️⃣ Team Members
 
 
 |                                       [Eyve Geordan](https://github.com/eyvonne)                                        |                                       [J Tyler Sheppard](https://github.com/jtsheppard)                                        |                                       [Ashwin Swamy](https://github.com/ash12hub)                                        |
@@ -17,66 +22,58 @@ You can find the project at [Quake Production API](https://quake-ds-production.h
 |                 [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/eyvonne)                 |            [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/jtsheppard)             |           [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/ash12hub)            |
 | [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/in/eyvonne-geordan-2a2b55168/) | [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/in/jtsheppard/) | [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/) |
 
+## 3️⃣ Endpoints
 
+### How to connect to the data API
 
+Production Endpoint 👉 https://quake-ds-production.herokuapp.com/  
+Staging Endpoint 👉 https://quake-ds-staging.herokuapp.com/
 
-![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg)
-![Typescript](https://img.shields.io/npm/types/typescript.svg?style=flat)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b5c4db1c-b10d-42c3-b157-3746edd9e81d/deploy-status)](netlify link goes in these parenthesis)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+#### Overview of Main Routes
 
-## Project Overview
+| Method | Endpoint                | Access Control | Description                                  |
+| ------ | ----------------------- | -------------- | -------------------------------------------- |
+| GET    | `/lastQuake/SOURCE/MAGNITUDE` | all users      | Returns the last quake over the given magnitude from the source  |
+| GET    | `/last/SOURCE/TIME/MAGNITUDE` | all users      | Gets the quakes over the given timeframe |
+| GET    | `/history/SOURCE/LAT,LON,DIST` | all users      | Returns all quakes in a given area |
 
+### How to use the routes
 
-1️⃣ [Trello Board](https://trello.com/b/5WH9iB9n/labspt7-quake)
+1. `/lastQuake/SOURCE/MAGNITUDE` - Returns the last quake over the given magnitude from the source 
 
-1️⃣ [Product Canvas](https://www.notion.so/User-Research-8cd64de109404266b2537457a426738d)
+`SOURCE`: choice of 'USGS' or 'EMSC' depending on which datasource to pull from 
+`MAGNITUDE`: a number 0-11 (accepts floats and ints) defaults to 5.5
 
-There are several routes to get out information about earthquakes:
+2. `/last/SOURCE/TIME/MAGNITUDE` - Gets the quakes over the given timeframe
 
-/lastQuake/[source]/[magnitude]
+`SOURCE`: choice of 'USGS' or 'EMSC' depending on which datasource to pull from 
+`TIME`: choice of 'hour', 'day', 'week' or 'month', returns quakes over the given time period
+`MAGNITUDE`: a number 0-11 (accepts floats and ints) defaults to 5.5
 
-Where source is either USGS or EMSC, depending on which data source you would like to draw information from. In a future release this will be updated to include an option for both sources once we merge them.
+3. `/history/SOURCE/LAT,LON,DIST` - Returns all quakes in a given area
 
-Magnitude is a number from 0-11 representing the minimum magnitude of earthquakes that you would like to see returned.
+`SOURCE`: choice of 'USGS' or 'EMSC' depending on which datasource to pull from
+`LAT` and `LON` are the central latitude and longitude  
+`DIST` is the distance in miles from the center to search from
 
+## Tech Stack 📚 
 
-/last/[time]/[source]/[magnitude]
+- [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+- [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
 
-For this time is one of 'hour', 'day', 'week', or 'month'. These time frames were selected to match the USGS API, in a future release this may be updated to be more flexible.
+### Architecture
 
-Source and Magnitude are the same as before.
-
-/
-
-### Tech Stack
-
-Python, Flask, Aws, Elastic Beanstalk, Heroku
+![architecture](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1b61d2ba-287a-4a01-8c6f-98ae376dc2c9%2Fquake-architect-diagram.jpg)
 
 ### Data Sources
 
--   [Source 1] (https://earthquake.usgs.gov/earthquakes/search/)
--   [Source 2] (https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php)
+-   [USGS Source 1] (https://earthquake.usgs.gov/earthquakes/search/)
+-   [USGS Source 2] (https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php)
+-   [ESMC] (https://www.emsc-csem.org/Earthquake/seismologist.php)
 
 ### Python Notebooks
 
 [Python Notebook 1](https://colab.research.google.com/drive/1g_zGrP7LCK4FNdJycQQcRJ_22iKL0_F6)
-
-
-### How to connect to the data API
-### Connect to latest earhquake data
-
-https://quake-ds-staging.herokuapp.com/lastQuake
-
-expected output in JSON
- - {"Oceanic":false,"id":"20km S of Trona, CA","lat":-117.4025,"lon":35.5833333,"mag":1.2,"place":1581475110360}
-
-### Get a list of earthquakes over the past specified period, options are ‘hour’ ‘day’ ‘week’ or ‘month’
-https://quake-ds-staging.herokuapp.com/last/{time}
-
-expected output in JSON
- - {"Oceanic":false,"latitude":-122.7941666,"longitude":38.8219986,"magnitude":0.79,"place":"6km NNW of The Geysers, CA","time":1582173089460}
-
 
 ## Contributing
 
