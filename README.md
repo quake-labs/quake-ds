@@ -9,9 +9,8 @@
 
 ## 1️⃣ Project Overview
 
-1️⃣ [Trello Board](https://trello.com/b/5WH9iB9n/labspt7-quake)
-
-2️⃣ [Product Canvas](https://www.notion.so/User-Research-8cd64de109404266b2537457a426738d)
+[Trello Board](https://trello.com/b/5WH9iB9n/labspt7-quake)
+[Product Canvas](https://www.notion.so/User-Research-8cd64de109404266b2537457a426738d)
 
 ## 2️⃣ Team Members
 
