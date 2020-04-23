@@ -56,7 +56,7 @@ Staging Endpoint 👉 https://quake-ds-staging.herokuapp.com/
 `LAT` and `LON` are the central latitude and longitude  
 `DIST` is the distance in miles from the center to search from
 
-## Tech Stack 📚 
+## 4️⃣ Tech Stack 📚 
 
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 - [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
@@ -65,17 +65,17 @@ Staging Endpoint 👉 https://quake-ds-staging.herokuapp.com/
 
 ![architecture](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F1b61d2ba-287a-4a01-8c6f-98ae376dc2c9%2Fquake-architect-diagram.jpg)
 
-### Data Sources
+## 5️⃣ Data Sources
 
 -   [USGS Source 1] (https://earthquake.usgs.gov/earthquakes/search/)
 -   [USGS Source 2] (https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php)
 -   [ESMC] (https://www.emsc-csem.org/Earthquake/seismologist.php)
 
-### Python Notebooks
+### Extra Python Notebooks
 
 [Python Notebook 1](https://colab.research.google.com/drive/1g_zGrP7LCK4FNdJycQQcRJ_22iKL0_F6)
 
-## Contributing
+## 6️⃣ Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
