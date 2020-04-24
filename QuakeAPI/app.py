@@ -137,8 +137,9 @@ def create_app():
                         'boundingA': [latA, lonA],
                         'boundingB': [latB, lonB]})
 
+    @app.route('/zip/<zip>')
     @app.route('/zip/<zip>/<dist>')
-    def zip_last(zip, dist):
+    def zip_last(zip, dist=20):
         '''returns the last quake within the given distance of the zip from USGS'''
         search = SearchEngine(simple_zipcode=True)
         loc = search.by_zipcode(zip)
