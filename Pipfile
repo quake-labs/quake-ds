@@ -17,6 +17,7 @@ pandas = "*"
 python-dotenv = "*"
 gunicorn = "*"
 flask = "*"
+uszipcode = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from .history import history as hist
 from .api_funcs import *
+from uszipcode import SearchEngine
 
 
 def create_app():
@@ -135,5 +136,59 @@ def create_app():
                         'num_quakes': num_quakes,
                         'boundingA': [latA, lonA],
                         'boundingB': [latB, lonB]})
+
+    @app.route('/zip/<zip>/<dist>')
+    def zip_last(zip, dist):
+        '''returns the last quake within the given distance of the zip from USGS'''
+        search = SearchEngine(simple_zipcode=True)
+        loc = search.by_zipcode(zip)
+        CONN = connect()
+
+        # Covert lat, lon and dist inputs to floats
+        lat = loc.to_dict()['lat']
+        lon = loc.to_dict()['lng']
+        dist = float(dist)
+
+        # Get corners from lat and lon
+        coordinates = hist(lat, lon, dist)
+        lonA = coordinates['lonA']
+        latA = coordinates['latA']
+        lonB = coordinates['lonB']
+        latB = coordinates['latB']
+
+        if latA < lat:
+            latA = 90.0
+        if latB > lat:
+            latB = -90.0
+
+        longitude_check = f'(Longitude BETWEEN {lonA} AND {lonB})'
+        if lonA < -180:
+            lonA = lonA + 360
+            longitude_check = f'(Longitude > {lonA} AND Longitude < {lonB})'
+        if lonB > 180:
+            lonB = lonB - 360
+            longitude_check = f'(Longitude > {lonA} AND Longitude < {lonB})'
+
+        # Query to get earthquakes within lat lon range
+        history_query = f'''
+        SELECT * FROM USGS
+        WHERE (Latitude BETWEEN {latB} AND {latA})
+        AND {longitude_check}
+        ORDER BY time desc
+        LIMIT 1;
+        '''
+
+        curs = CONN.cursor()
+        curs.execute(history_query)
+        history = curs.fetchall()
+        CONN.close()
+
+        num_quakes = len(history)
+        quakes = []
+        for quake in history:
+            quakes.append(prep_response(quake, 'USGS'))
+
+        return jsonify({'status_code': 200,
+                        'message': quakes})
 
     return app
