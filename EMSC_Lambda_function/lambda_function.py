@@ -19,7 +19,7 @@ def query(query):
     try:
         curs.execute(query)
     except:
-        e = e = sys.exc_info()[0]
+        e = sys.exc_info()[0]
         print(e)
         print('Query error')
     curs.close()
