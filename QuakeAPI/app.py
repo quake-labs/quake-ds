@@ -209,7 +209,8 @@ def create_app():
             CONN.commit()
             CONN.close()
             return jsonify({'status_code': 200,
-                            'message': message})
+                            'message': message,
+                            'num_comments': len(comments)})
 
         if request.method == 'POST':
             name = request.form.get('display_name')
