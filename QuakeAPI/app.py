@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from .history import history as hist
 from .api_funcs import *
 from .comments import *
@@ -201,7 +201,7 @@ def create_app():
             query = f'''SELECT name, comment
                         FROM comments
                         WHERE source='{source.upper()}' and
-                        QuakeID={quake}'''
+                        QuakeID={quake};'''
             curs.execute(query)
             comments = curs.fetchall()
             message = [prep_comments(comment) for comment in comments]
