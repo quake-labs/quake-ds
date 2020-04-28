@@ -5,7 +5,7 @@ import requests
 from config import *
 import re
 from datetime import datetime
-
+import sys
 
 CONN = psycopg2.connect(user=toyUSER,
                         password=toyPASSWORD,
@@ -19,9 +19,12 @@ def query(query):
     try:
         curs.execute(query)
     except:
+        e = sys.exc_info()[0]
+        print(e)
         print('Query error')
     curs.close()
     CONN.commit()
+    CONN.close()
 
 
 class EMSC_scraper():
@@ -85,9 +88,9 @@ class EMSC_scraper():
             self.row_num = 0
 
     def construct_query(self):
-        self.day_insert = 'INSERT INTO EMSC (place, time, lat, lon, mag) VALUES '
+        self.day_insert = 'INSERT INTO EMSC (place, time, Latitude, longitude, magnitude) VALUES '
         for quake in self.quakes:
-            row_insert = f"('{quake['place']}', '{quake['time']}', {quake['lat']}, {quake['lon']}, {quake['mag']}), "
+            row_insert = f"('{quake['place']}', {quake['time']}, {quake['lat']}, {quake['lon']}, {quake['mag']}), "
             self.day_insert += row_insert
         self.day_insert = self.day_insert[:-2]+';'
 
@@ -109,6 +112,4 @@ def lambda_handler(event, context):
 
 if __name__ == '__main__':
     scrapper = EMSC_scraper()
-    scrapper.find_yesterday()
-    scrapper.get_yesterday()
-    print(scrapper.quakes)
+    query(scrapper.query_yesterday())
