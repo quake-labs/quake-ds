@@ -193,8 +193,7 @@ def create_app():
         return jsonify({'status_code': 200,
                         'message': quakes})
 
-    @app.route('/comments/', methods=['POST'])
-    @app.route('/comments/<source>/<quake>', methods=['GET', 'DELETE'])
+    @app.route('/comments/<source>/<quake>', methods=['GET', 'POST', 'DELETE'])
     def comments(source, quake):
         if request.method == 'GET':
             CONN = connect()
@@ -212,7 +211,5 @@ def create_app():
         if request.method == 'POST':
             name = request.form.get('display_name')
             comment = request.form.get('comment')
-            source = request.form.get('Source')
-            quake = request.form.get('QuakeID')
 
     return app
