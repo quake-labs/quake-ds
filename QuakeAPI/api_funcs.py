@@ -78,3 +78,11 @@ def prep_response(quake, source):
     if source == 'USGS':
         response['Oceanic'] = quake[6]
     return response
+
+
+def prep_comments(comment):
+    response = {
+        'name': comment[0],
+        'comment': comment[1]
+    }
+    return response

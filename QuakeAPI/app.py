@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from .history import history as hist
 from .api_funcs import *
+from .comments import *
 from uszipcode import SearchEngine
 
 
@@ -191,5 +192,27 @@ def create_app():
 
         return jsonify({'status_code': 200,
                         'message': quakes})
+
+    @app.route('/comments/', methods=['POST'])
+    @app.route('/comments/<source>/<quake>', methods=['GET', 'DELETE'])
+    def comments(source, quake):
+        if request.method == 'GET':
+            CONN = connect()
+            curs = CONN.cursor()
+            query = f'''SELECT name, comment
+                        FROM comments
+                        WHERE source='{source.upper()}' and
+                        QuakeID={quake}'''
+            curs.execute(query)
+            comments = curs.fetchall()
+            message = [prep_comments(comment) for comment in comments]
+            return jsonify({'status_code': 200,
+                            'message': message})
+
+        if request.method == 'POST':
+            name = request.form.get('display_name')
+            comment = request.form.get('comment')
+            source = request.form.get('Source')
+            quake = request.form.get('QuakeID')
 
     return app
