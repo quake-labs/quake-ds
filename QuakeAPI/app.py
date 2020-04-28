@@ -215,7 +215,7 @@ def create_app():
         if request.method == 'POST':
             name = request.form.get('display_name')
             comment = request.form.get('comment')
-            insertion = f"INSERT INTO comments (comment, name, QuakeID, source) values ({comment}, {name}, {QuakeID}, {source});"
+            insertion = f"INSERT INTO comments (comment, name, QuakeID, source) values ({comment}, {name}, {quake}, {source});"
             curs.execute(insertion)
             curs.close()
             CONN.commit()
