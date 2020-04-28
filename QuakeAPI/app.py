@@ -211,5 +211,6 @@ def create_app():
         if request.method == 'POST':
             name = request.form.get('display_name')
             comment = request.form.get('comment')
+            return jsonify({'comment': comment, 'name': name, 'quake': quake, 'source': source})
 
     return app
