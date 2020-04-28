@@ -195,9 +195,9 @@ def create_app():
 
     @app.route('/comments/<source>/<quake>', methods=['GET', 'POST', 'DELETE'])
     def comments(source, quake):
+        CONN = connect()
+        curs = CONN.cursor()
         if request.method == 'GET':
-            CONN = connect()
-            curs = CONN.cursor()
             query = f'''SELECT name, comment
                         FROM comments
                         WHERE source='{source.upper()}' and
@@ -205,12 +205,20 @@ def create_app():
             curs.execute(query)
             comments = curs.fetchall()
             message = [prep_comments(comment) for comment in comments]
+            curs.close()
+            CONN.commit()
+            CONN.close()
             return jsonify({'status_code': 200,
                             'message': message})
 
         if request.method == 'POST':
             name = request.form.get('display_name')
             comment = request.form.get('comment')
+            insertion = f"INSERT INTO comments (comment, name, QuakeID, source) values ({comment}, {name}, {QuakeID}, {source});"
+            curs.execute(insertion)
+            curs.close()
+            CONN.commit()
+            CONN.close()
             return jsonify({'comment': comment, 'name': name, 'quake': quake, 'source': source})
 
     return app
